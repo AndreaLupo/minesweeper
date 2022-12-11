@@ -6,6 +6,7 @@
       :key="cell.key"
       :cell="cell"
       @end-game="endGame"
+      @open-empty-adjacent="openEmptyAdjacent"
     ></PlayboardCell>
   </div>
 </template>
@@ -34,6 +35,10 @@ const cellList = computed(function (): Array<Cell> {
 
 const endGame = (): void => {
   $dial.showDialog = true;
+};
+const openEmptyAdjacent = (cell: Cell): void => {
+  // gameGrid.printDebugGrid();
+  gameGrid.automaticOpenAdjacentEmptyCell(cell);
 };
 </script>
 
