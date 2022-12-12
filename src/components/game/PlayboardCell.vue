@@ -35,7 +35,16 @@
 
 <script setup lang="ts">
 import { Cell, CellStatus } from "@/model/Cell";
-import { computed, isReactive, ref, toRef, toRefs, watch, type Ref } from "vue";
+import {
+  computed,
+  isReactive,
+  reactive,
+  ref,
+  toRef,
+  toRefs,
+  watch,
+  type Ref,
+} from "vue";
 
 /* import the fontawesome core */
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -45,20 +54,20 @@ import { faFlag, faQuestion } from "@fortawesome/free-solid-svg-icons";
 library.add(faFlag);
 library.add(faQuestion);
 
-const emit = defineEmits(["endGame", "openEmptyAdjacent"]);
+const emit = defineEmits(["endGame", "openEmptyAdjacent", "openCellsAround"]);
 
 const props = defineProps({
   cell: { type: Cell, required: true },
 });
 
-let cell = ref(props.cell);
+let cell = reactive(props.cell);
 
 const cellClass = computed(() => {
-  const isZero = !cell.value.hasBombsNearby;
+  const isZero = !cell.hasBombsNearby;
   return { "num-0": isZero, num: !isZero };
 });
 const numberShownClass = computed((): string => {
-  return `num num-${cell.value.numberShown}`;
+  return `num num-${cell.numberShown}`;
 });
 
 watch(
@@ -73,34 +82,39 @@ watch(
 );
 
 const openCell = () => {
-  if (cell.value.isBomb) {
-    cell.value.status = CellStatus.BOOM;
+  if (cell.isBomb) {
+    cell.status = CellStatus.BOOM;
     emit("endGame");
   }
-  console.log("Opening");
+  console.log("Opening, current status:", cell.status);
 
-  if (!cell.value.hasBombsNearby) {
+  if (!cell.hasBombsNearby) {
     // cell will be opened in automatic cell update
-    emit("openEmptyAdjacent", cell.value);
+    // emit("openEmptyAdjacent", cell);
   } else {
-    cell.value.status = CellStatus.OPEN;
+    // cell.status = CellStatus.OPEN;
   }
+  cell.status = CellStatus.OPEN;
 };
 
 const goToNextCellStatus = (event: Event) => {
   event.preventDefault();
-  switch (cell.value.status) {
+  switch (cell.status) {
     case CellStatus.CLOSED:
-      cell.value.status = CellStatus.FLAGGED;
+      cell.status = CellStatus.FLAGGED;
       break;
     case CellStatus.FLAGGED:
-      cell.value.status = CellStatus.QUESTION_MARK;
+      cell.status = CellStatus.QUESTION_MARK;
       break;
     case CellStatus.QUESTION_MARK:
-      cell.value.status = CellStatus.CLOSED;
+      cell.status = CellStatus.CLOSED;
       break;
     default:
   }
+};
+
+const openCellsAround = () => {
+  emit("openCellsAround", cell);
 };
 </script>
 
@@ -109,24 +123,29 @@ const goToNextCellStatus = (event: Event) => {
 
 .cell {
   display: flex;
-  padding: 1rem 1.2rem;
+  position: relative;
+  padding: 1.4rem;
   background-color: $text-color-bright;
   font-size: 1.4em;
   font-weight: bold;
 
   &-closed {
-    padding: 1.4rem;
     background-color: $color-primary;
+  }
+
+  span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .fa-flag {
     color: red;
-    font-size: 1.4em;
   }
 
   .fa-question {
     color: yellow;
-    font-size: 1.4em;
   }
 
   &.num {
@@ -135,20 +154,21 @@ const goToNextCellStatus = (event: Event) => {
   }
 
   &.num-0 {
-    background-color: $color-brown;
+    background-color: $text-color-bright;
   }
 
-  .num-1 {
-    color: #34a9bd;
+  @mixin num($color) {
+    color: $color;
     font-weight: bold;
+  }
+  .num-1 {
+    @include num(#34a9bd);
   }
   .num-2 {
-    color: #94ba08;
-    font-weight: bold;
+    @include num(#94ba08);
   }
   .num-3 {
-    color: #53c239;
-    font-weight: bold;
+    @include num(#53c239);
   }
 }
 </style>

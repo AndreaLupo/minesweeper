@@ -7,12 +7,13 @@
       :cell="cell"
       @end-game="endGame"
       @open-empty-adjacent="openEmptyAdjacent"
+      @open-cells-around="openCellsAround"
     ></PlayboardCell>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Cell } from "@/model/Cell";
+import { Cell, CellStatus } from "@/model/Cell";
 import { FixedGrid } from "@/model/grid/FixedGrid";
 import { Difficulty } from "@/model/grid/GameGrid";
 import { computed, reactive, toRef } from "vue";
@@ -39,6 +40,13 @@ const endGame = (): void => {
 const openEmptyAdjacent = (cell: Cell): void => {
   // gameGrid.printDebugGrid();
   gameGrid.automaticOpenAdjacentEmptyCell(cell);
+};
+
+const openCellsAround = (cell: Cell): void => {
+  const cells: Cell[] = gameGrid.getCellsAround(cell);
+  for (const cell of cells) {
+    cell.status = CellStatus.OPEN;
+  }
 };
 </script>
 
