@@ -13,8 +13,12 @@ const { gameDuration } = storeToRefs(gameStore);
 const duration = computed(() => {
   const minutes = Math.floor(gameDuration.value.seconds / 60);
   const seconds = gameDuration.value.seconds % 60;
-  return `${minutes}:${seconds}`;
+  return `${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
 });
+
+function padTo2Digits(num: number) {
+  return num.toString().padStart(2, "0");
+}
 </script>
 
 <style scoped lang="scss"></style>
