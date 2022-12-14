@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <GameTimer></GameTimer>
-    <div><font-awesome-icon icon="fa-solid fa-bomb" /> 10</div>
+    <div><font-awesome-icon icon="fa-solid fa-bomb" /> {{ countBombs }}</div>
   </div>
 </template>
 
@@ -10,8 +10,13 @@ import GameTimer from "./GameTimer.vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faBomb } from "@fortawesome/free-solid-svg-icons";
+import { useBombCounterStore } from "@/stores/counter";
+import { storeToRefs } from "pinia";
 
+const bombStore = useBombCounterStore();
 library.add(faBomb);
+
+const { countBombs } = storeToRefs(bombStore);
 </script>
 
 <style scoped lang="scss">

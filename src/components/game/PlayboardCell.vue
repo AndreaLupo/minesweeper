@@ -50,9 +50,12 @@ import {
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faFlag, faQuestion } from "@fortawesome/free-solid-svg-icons";
+import { useBombCounterStore } from "@/stores/counter";
 
 library.add(faFlag);
 library.add(faQuestion);
+
+const bombStore = useBombCounterStore();
 
 const emit = defineEmits(["endGame", "openEmptyAdjacent", "openCellsAround"]);
 
@@ -102,9 +105,11 @@ const goToNextCellStatus = (event: Event) => {
   switch (cell.status) {
     case CellStatus.CLOSED:
       cell.status = CellStatus.FLAGGED;
+      bombStore.decrement();
       break;
     case CellStatus.FLAGGED:
       cell.status = CellStatus.QUESTION_MARK;
+      bombStore.increment();
       break;
     case CellStatus.QUESTION_MARK:
       cell.status = CellStatus.CLOSED;
