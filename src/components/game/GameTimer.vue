@@ -1,7 +1,20 @@
 <template>
-  <div>00:00</div>
+  <div>{{ duration }}</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useGameStore } from "@/stores/match";
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+
+const gameStore = useGameStore();
+const { gameDuration } = storeToRefs(gameStore);
+
+const duration = computed(() => {
+  const minutes = Math.floor(gameDuration.value.seconds / 60);
+  const seconds = gameDuration.value.seconds % 60;
+  return `${minutes}:${seconds}`;
+});
+</script>
 
 <style scoped lang="scss"></style>

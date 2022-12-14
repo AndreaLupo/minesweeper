@@ -10,13 +10,13 @@ import GameTimer from "./GameTimer.vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faBomb } from "@fortawesome/free-solid-svg-icons";
-import { useBombCounterStore } from "@/stores/counter";
+import { useGameStore } from "@/stores/match";
 import { storeToRefs } from "pinia";
 
-const bombStore = useBombCounterStore();
+const gameStore = useGameStore();
 library.add(faBomb);
 
-const { countBombs } = storeToRefs(bombStore);
+const { countBombs, gameDuration } = storeToRefs(gameStore);
 </script>
 
 <style scoped lang="scss">

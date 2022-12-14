@@ -50,12 +50,12 @@ import {
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faFlag, faQuestion } from "@fortawesome/free-solid-svg-icons";
-import { useBombCounterStore } from "@/stores/counter";
+import { useGameStore } from "@/stores/match";
 
 library.add(faFlag);
 library.add(faQuestion);
 
-const bombStore = useBombCounterStore();
+const gameStore = useGameStore();
 
 const emit = defineEmits(["endGame", "openEmptyAdjacent", "openCellsAround"]);
 
@@ -94,6 +94,7 @@ const openCell = () => {
   if (!cell.hasBombsNearby) {
     // cell will be opened in automatic cell update
     // emit("openEmptyAdjacent", cell);
+    gameStore.openCellsAround(cell);
   } else {
     // cell.status = CellStatus.OPEN;
   }
@@ -105,11 +106,11 @@ const goToNextCellStatus = (event: Event) => {
   switch (cell.status) {
     case CellStatus.CLOSED:
       cell.status = CellStatus.FLAGGED;
-      bombStore.decrement();
+      gameStore.decrementBombs();
       break;
     case CellStatus.FLAGGED:
       cell.status = CellStatus.QUESTION_MARK;
-      bombStore.increment();
+      gameStore.incrementBombs();
       break;
     case CellStatus.QUESTION_MARK:
       cell.status = CellStatus.CLOSED;

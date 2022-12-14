@@ -16,22 +16,27 @@
 import { Cell, CellStatus } from "@/model/Cell";
 import { FixedGrid } from "@/model/grid/FixedGrid";
 import { Difficulty } from "@/model/grid/GameGrid";
+import { useGameStore } from "@/stores/match";
+import { storeToRefs } from "pinia";
 import { computed, reactive, toRef } from "vue";
 import MineModal from "../ui/MineModal.vue";
 import PlayboardCell from "./PlayboardCell.vue";
 
-const gameGrid: FixedGrid = new FixedGrid(Difficulty.EASY);
+const gameStore = useGameStore();
+gameStore.initGrid(Difficulty.EASY);
+const { gameGrid } = storeToRefs(gameStore);
+// const gameGrid: FixedGrid = new FixedGrid(Difficulty.EASY);
 const $dial = reactive({ showDialog: false });
 
 const cssNumColumnFr = computed(function (): string {
-  return `repeat(${gameGrid.numCol}, 1fr)`;
+  return `repeat(${gameGrid.value.numCol}, 1fr)`;
 });
 const cssNumRowFr = computed(function (): string {
-  return `repeat(${gameGrid.numRow}, 1fr)`;
+  return `repeat(${gameGrid.value.numRow}, 1fr)`;
 });
 
 const cellList = computed(function (): Array<Cell> {
-  return gameGrid.cellList.flatMap((el) => el);
+  return gameGrid.value.cellList.flatMap((el) => el);
 });
 
 const endGame = (): void => {
@@ -39,11 +44,11 @@ const endGame = (): void => {
 };
 const openEmptyAdjacent = (cell: Cell): void => {
   // gameGrid.printDebugGrid();
-  gameGrid.automaticOpenAdjacentEmptyCell(cell);
+  gameGrid.value.automaticOpenAdjacentEmptyCell(cell);
 };
 
 const openCellsAround = (cell: Cell): void => {
-  const cells: Cell[] = gameGrid.getCellsAround(cell);
+  const cells: Cell[] = gameGrid.value.getCellsAround(cell);
   for (const cell of cells) {
     cell.status = CellStatus.OPEN;
   }

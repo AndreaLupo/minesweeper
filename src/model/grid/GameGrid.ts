@@ -6,6 +6,12 @@ export enum Difficulty {
   DIFFICULT
 }
 
+export enum GameResult {
+  NOT_END,
+  WIN,
+  LOOSE
+}
+
 export const BOMB: number = -1;
 
 export interface GameStatusGrid {
@@ -36,6 +42,17 @@ export abstract class GameGrid implements GameStatusGrid {
 
   get numCol() {
     return this.maxCol;
+  }
+
+  /**
+   * Return the number of cell present in the grid.
+   */
+  get totalNumCells() {
+    return this.maxRow * this.maxCol;
+  }
+
+  get gameComplete(): boolean {
+    return this.countOpenCell() === this.totalNumCells && this.checkAllCellsHaveValueFromUser();
   }
 
   createGrid = (): void => {
@@ -139,12 +156,12 @@ export abstract class GameGrid implements GameStatusGrid {
     return countBomb;
   }
 
-  isValidCell(currRow: number, currCol: number) {
+  isValidCell(currRow: number, currCol: number): boolean {
     const isOutOfBound = currRow < 0 || currCol < 0 || currRow > (this.maxRow - 1) || currCol > (this.maxCol - 1);
     return !isOutOfBound;
   }
 
-  getCellsAround(cell: Cell): Cell[] {
+  getCellsAround = (cell: Cell): Cell[] => {
     let currRow = cell.row;
     let currCol = cell.column;
     const cells: Cell[] = [];
@@ -177,7 +194,7 @@ export abstract class GameGrid implements GameStatusGrid {
     return cells;
   }
 
-  automaticOpenAdjacentEmptyCell(cell: Cell): void {
+  automaticOpenAdjacentEmptyCell = (cell: Cell): void => {
     if (!cell.hasBombsNearby && cell.status !== CellStatus.OPEN) {
       cell.status = CellStatus.OPEN;
       const cellsAround: Cell[] = this.getCellsAround(cell);
@@ -185,5 +202,48 @@ export abstract class GameGrid implements GameStatusGrid {
         this.automaticOpenAdjacentEmptyCell(cellAround);
       }
     }
+  }
+
+  countOpenCell = (): number => {
+    let totalOpen = 0;
+    for (const rowCells of this.cells) {
+      const openCells = rowCells.filter((cell: Cell) => cell.isOpen);
+      totalOpen += openCells.length;
+    }
+    return totalOpen;
+  }
+
+  checkAllCellsHaveValueFromUser = (): boolean => {
+    for (const rowCells of this.cells) {
+      for (const cell of rowCells) {
+        if (!cell.hasValueFromUser) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  evaluateEndGame(): GameResult {
+    if (!this.gameComplete) {
+      return GameResult.NOT_END;
+    }
+
+    if (this.allUserFlagsOnBombs()) {
+      return GameResult.WIN;
+    }
+
+    return GameResult.LOOSE;
+  }
+
+  allUserFlagsOnBombs() {
+    for (const rowCells of this.cells) {
+      for (const cell of rowCells) {
+        if (cell.hasWrongValueFromUser) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }
