@@ -35,16 +35,7 @@
 
 <script setup lang="ts">
 import { Cell, CellStatus } from "@/model/Cell";
-import {
-  computed,
-  isReactive,
-  reactive,
-  ref,
-  toRef,
-  toRefs,
-  watch,
-  type Ref,
-} from "vue";
+import { computed, reactive, watch } from "vue";
 
 /* import the fontawesome core */
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -56,7 +47,15 @@ library.add(faFlag);
 library.add(faQuestion);
 
 const gameStore = useGameStore();
-
+/*
+console.log("Grid reactive? ", isReactive(gameStore.gameGrid));
+console.log("Cells reactive? ", isReactive(gameStore.gameGrid.cellList));
+console.log(
+  "Status reactive? ",
+  isReactive(gameStore.gameGrid.cellList[0][0].status)
+);
+console.log("Num row reactive? ", isReactive(gameStore.gameGrid.numRow));
+*/
 const emit = defineEmits(["endGame", "openEmptyAdjacent", "openCellsAround"]);
 
 const props = defineProps({
@@ -73,32 +72,24 @@ const numberShownClass = computed((): string => {
   return `num num-${cell.numberShown}`;
 });
 
-watch(
-  () => open,
-  (first, second) => {
-    console.log(
-      "Watch props.selected function called with args:",
-      first,
-      second
-    );
-  }
-);
-
 const openCell = () => {
+  if (CellStatus.FLAGGED === cell.status) {
+    // don't have to open cell if the player is wrong!
+    return;
+  }
+
   if (cell.isBomb) {
     cell.status = CellStatus.BOOM;
     emit("endGame");
   }
-  console.log("Opening, current status:", cell.status);
 
   if (!cell.hasBombsNearby) {
     // cell will be opened in automatic cell update
     // emit("openEmptyAdjacent", cell);
-    gameStore.openCellsAround(cell);
+    openCellsAround();
   } else {
-    // cell.status = CellStatus.OPEN;
+    cell.status = CellStatus.OPEN;
   }
-  cell.status = CellStatus.OPEN;
 };
 
 const goToNextCellStatus = (event: Event) => {
@@ -121,6 +112,8 @@ const goToNextCellStatus = (event: Event) => {
 
 const openCellsAround = () => {
   emit("openCellsAround", cell);
+  // gameStore.openCellsAround(cell);
+  cell.status = CellStatus.OPEN;
 };
 </script>
 
@@ -144,6 +137,7 @@ const openCellsAround = () => {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    user-select: none;
   }
 
   .fa-flag {

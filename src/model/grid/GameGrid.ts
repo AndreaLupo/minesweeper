@@ -162,35 +162,19 @@ export abstract class GameGrid implements GameStatusGrid {
   }
 
   getCellsAround = (cell: Cell): Cell[] => {
-    let currRow = cell.row;
-    let currCol = cell.column;
+    const minRow = cell.row - 1;
+    const minCol = cell.column - 1;
+    const maxRow = minRow + 2;
+    const maxCol = minCol + 2;
+
     const cells: Cell[] = [];
-
-    if (this.isValidCell(currRow, currCol)) {
-      cells.push(this.cells[currRow][currCol++])
+    for (let currRow = minRow; currRow <= maxRow; currRow++) {
+      for (let currCol = minCol; currCol <= maxCol; currCol++) {
+        if (this.isValidCell(currRow, currCol) && !cell.isPosition(currRow, currCol)) {
+          cells.push(this.cells[currRow][currCol]);
+        }
+      }
     }
-    if (this.isValidCell(currRow, currCol)) {
-      cells.push(this.cells[currRow][currCol++])
-    }
-    if (this.isValidCell(currRow, currCol)) {
-      cells.push(this.cells[currRow++][currCol])
-    }
-    if (this.isValidCell(currRow, currCol)) {
-      cells.push(this.cells[currRow++][currCol])
-    }
-    if (this.isValidCell(currRow, currCol)) {
-      cells.push(this.cells[currRow][currCol--])
-    }
-    if (this.isValidCell(currRow, currCol)) {
-      cells.push(this.cells[currRow][currCol--])
-    }
-    if (this.isValidCell(currRow, currCol)) {
-      cells.push(this.cells[currRow--][currCol])
-    }
-    if (this.isValidCell(currRow, currCol)) {
-      cells.push(this.cells[currRow][currCol])
-    }
-
     return cells;
   }
 

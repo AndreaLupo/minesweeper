@@ -47,4 +47,8 @@ export class Cell {
   }
 
 
+  isPosition(row: number, col: number): boolean {
+    return this.row === row && this.column === col;
+  }
+
 }
