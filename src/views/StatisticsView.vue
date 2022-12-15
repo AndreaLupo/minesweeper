@@ -6,7 +6,7 @@
     </div>
     <div class="item">
       <div class="title">Lost</div>
-      <div class="value">92</div>
+      <div class="value">{{lostGames}}</div>
     </div>
     <div class="item">
       <div class="title">Started</div>
@@ -19,7 +19,11 @@
   </div>
 </template>
 
-<script lang="ts"></script>
+<script setup lang="ts">
+import { useStatisticsStore } from '@/stores/statistics';
+const statisticsStore = useStatisticsStore();
+const { lostGames } = statisticsStore;
+</script>
 
 <style lang="scss">
 @import "@/assets/variables.scss";
