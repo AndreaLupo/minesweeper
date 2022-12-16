@@ -21,6 +21,8 @@ export class FixedGrid extends GameGrid {
       this.cells[8][0].numberShown = BOMB;
       this.cells[8][2].numberShown = BOMB;
       this.cells[8][4].numberShown = BOMB;
+    } else if (this.difficulty === Difficulty.MEDIUM) {
+      this.cells[0][6].numberShown = BOMB;
     }
   }
 }

@@ -1,9 +1,9 @@
 import { Cell, CellStatus } from "../Cell";
 
 export enum Difficulty {
-  EASY,
-  MEDIUM,
-  DIFFICULT
+  EASY = "EASY",
+  MEDIUM = "MEDIUM",
+  DIFFICULT = "DIFFICULT"
 }
 
 export enum GameResult {

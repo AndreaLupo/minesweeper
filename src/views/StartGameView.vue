@@ -1,16 +1,17 @@
 <template>
   <span class="text">Choose difficulty</span>
   <div class="difficulties">
-    <div class="diff" @click="start('easy')">Easy</div>
-    <div class="diff" @click="start('medium')">Medium</div>
-    <div class="diff" @click="start('hard')">Hard</div>
+    <div class="diff" @click="start(Difficulty.EASY)">Easy</div>
+    <div class="diff" @click="start(Difficulty.MEDIUM)">Medium</div>
+    <div class="diff" @click="start(Difficulty.DIFFICULT)">Hard</div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { Difficulty } from "@/model/grid/GameGrid";
 import router from "@/router";
 
-const start = (level: string) => {
+const start = (level: Difficulty) => {
   // set difficulty in store
   router.replace("/play");
 };

@@ -10,7 +10,7 @@
     </div>
     <div class="item">
       <div class="title">Started</div>
-      <div class="value">10</div>
+      <div class="value">-1</div>
     </div>
     <div class="item">
       <div class="title">Best time</div>
@@ -24,7 +24,7 @@ import { useStatisticsStore } from "@/stores/statistics";
 import { computed } from "vue";
 import dayjs from "dayjs";
 const statisticsStore = useStatisticsStore();
-const { lostGames, winGames, bestTime } = statisticsStore;
+const { lostGames, winGames, bestTime } = statisticsStore.difficultyStats;
 
 const bestTimeText = computed(() => {
   console.log(bestTime);

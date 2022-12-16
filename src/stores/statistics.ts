@@ -1,26 +1,53 @@
+import { Difficulty } from "@/model/grid/GameGrid";
 import { defineStore } from "pinia";
-import { ref, type Ref } from "vue";
+import { reactive } from "vue";
+import { useGameStore } from "./match";
+
+interface DifficultyStats {
+  lostGames: number;
+  winGames: number;
+  bestTime: number;
+}
+
 
 export const useStatisticsStore = defineStore("statistics", () => {
 
-  const getFromLocalStorage = function (key: string, defaultValue?: number): Ref<number> {
-    const lostStr = localStorage.getItem(key);
-    const def: number = defaultValue ? defaultValue : 0;
-    const lost: number = lostStr ? +lostStr : def;
-    return ref(lost);
+  const gameStore = useGameStore();
+  const difficulty = gameStore.gameGrid ? gameStore.gameGrid.difficulty : Difficulty.EASY;
+
+  const getFromLocalStorage = function (difficulty: Difficulty, defaults?: DifficultyStats): DifficultyStats {
+    const storage: string | null = localStorage.getItem(difficulty);
+    let diffStats: DifficultyStats;
+    if (storage) {
+      diffStats = JSON.parse(storage);
+    } else if (defaults) {
+      diffStats = defaults;
+    } else {
+      diffStats = {
+        lostGames: 0,
+        winGames: 0,
+        bestTime: 100000000
+      };
+    }
+
+    return reactive(diffStats);
   }
 
-  const lostGames = getFromLocalStorage('lostGames');
-  const winGames = getFromLocalStorage('winGames');
-  const bestTime = getFromLocalStorage('bestTime', 1000000);
+  const defaults: DifficultyStats = {
+    lostGames: 0,
+    winGames: 0,
+    bestTime: 1000000
+  }
+
+  const difficultyStats = getFromLocalStorage(difficulty, defaults);
 
   function incrementLostGames() {
-    lostGames.value++;
-    localStorage.setItem('lostGames', `${lostGames.value}`);
+    difficultyStats.lostGames++;
+    localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
   function incrementWinGames() {
-    winGames.value++;
-    localStorage.setItem('winGames', `${winGames.value}`);
+    difficultyStats.winGames++;
+    localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
 
   /**
@@ -29,7 +56,7 @@ export const useStatisticsStore = defineStore("statistics", () => {
    * @returns 
    */
   function checkAndUpdateBestTime(time: number): boolean {
-    if (bestTime.value > time) {
+    if (difficultyStats.bestTime > time) {
       setBestTime(time);
       return true;
     }
@@ -38,14 +65,16 @@ export const useStatisticsStore = defineStore("statistics", () => {
 
   function setBestTime(time: number) {
     console.log('New best time!');
-    bestTime.value = time;
-    localStorage.setItem('bestTime', `${bestTime.value}`);
+    difficultyStats.bestTime = time;
+    localStorage.setItem('bestTime', `${difficultyStats.bestTime}`);
+  }
+
+  function getStatisticsByDifficulty(difficulty: Difficulty) {
+
   }
 
   return {
-    lostGames,
-    winGames,
-    bestTime,
+    difficultyStats,
     incrementLostGames,
     incrementWinGames,
     checkAndUpdateBestTime
