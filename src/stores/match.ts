@@ -1,12 +1,16 @@
+import { useStatisticsStore } from './statistics';
 import { CellStatus } from './../model/Cell';
 import { Difficulty, GameResult } from './../model/grid/GameGrid';
-import { reactive, ref } from "vue";
+import { isReactive, reactive, ref } from "vue";
 import { defineStore } from "pinia";
 import { FixedGrid } from "@/model/grid/FixedGrid";
 import type { Cell } from '@/model/Cell';
 
+
 export const useGameStore = defineStore("game", () => {
   const countBombs = ref(10);
+  const statisticsStore = useStatisticsStore();
+
   const gameDuration = reactive({
     seconds: 0,
     paused: false
@@ -41,8 +45,32 @@ export const useGameStore = defineStore("game", () => {
     gameGrid.automaticOpenAdjacentEmptyCell(cell);
   }
 
+  function openCell(cell: Cell) {
+    const cel = reactive(gameGrid.getCell(cell.row, cell.column));
+    if (CellStatus.FLAGGED === cel.status) {
+      // don't have to open cell if the player is wrong!
+      return;
+    }
+
+    if (cel.isBomb) {
+      cel.status = CellStatus.BOOM;
+      endGame(GameResult.LOOSE);
+    }
+
+    if (!cel.hasBombsNearby) {
+      // cell will be opened in automatic cell update
+      // emit("openEmptyAdjacent", cell);
+      openCellsAround(cell);
+    } else {
+      cel.status = CellStatus.OPEN;
+    }
+  }
+
   function openCellsAround(cell: Cell) {
-    const cellsAround = gameGrid.getCellsAround(cell);
+    console.log('Open cells with store');
+    const cellsAround = reactive(gameGrid.getCellsAround(cell));
+    console.log('Is reactive?', isReactive(cellsAround));
+
 
     for (const cell of cellsAround) {
       if (!cell.hasFlag && cell.isBomb) {
@@ -52,6 +80,19 @@ export const useGameStore = defineStore("game", () => {
       } else {
         // cell has flag - n
       }
+    }
+    cell.status = CellStatus.OPEN;
+  }
+
+  function endGame(result: GameResult) {
+    console.log('End game with store!');
+    gameResult.value = result;
+    togglePauseTimer();
+    if (result === GameResult.LOOSE) {
+      statisticsStore.incrementLostGames();
+    } else {
+      statisticsStore.incrementWinGames();
+      statisticsStore.checkAndUpdateBestTime(gameDuration.seconds);
     }
   }
 
@@ -78,7 +119,9 @@ export const useGameStore = defineStore("game", () => {
     automaticopenCellsAround,
     decrementBombs,
     initGrid,
+    openCell,
     openCellsAround,
+    endGame,
     numCellFlaggedAround,
     togglePauseTimer
   };

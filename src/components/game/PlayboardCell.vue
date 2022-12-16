@@ -42,6 +42,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faFlag, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { useGameStore } from "@/stores/match";
+import { GameResult } from "@/model/grid/GameGrid";
 
 library.add(faFlag);
 library.add(faQuestion);
@@ -56,7 +57,7 @@ console.log(
 );
 console.log("Num row reactive? ", isReactive(gameStore.gameGrid.numRow));
 */
-const emit = defineEmits(["endGame", "openEmptyAdjacent", "openCellsAround"]);
+const emit = defineEmits(["openEmptyAdjacent", "openCellsAround"]);
 
 const props = defineProps({
   cell: { type: Cell, required: true },
@@ -80,13 +81,14 @@ const openCell = () => {
 
   if (cell.isBomb) {
     cell.status = CellStatus.BOOM;
-    emit("endGame");
+    gameStore.endGame(GameResult.LOOSE);
   }
 
   if (!cell.hasBombsNearby) {
     // cell will be opened in automatic cell update
     // emit("openEmptyAdjacent", cell);
     openCellsAround();
+    gameStore.openCellsAround(cell);
   } else {
     cell.status = CellStatus.OPEN;
   }

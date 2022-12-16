@@ -1,11 +1,12 @@
 <template>
   <div class="grid">
-    <MineModal :show="isGameEnded" title="You lost!"> </MineModal>
+    <MineModal :show="isGameEnded" :title="gameEndData.title">
+      <p>{{ gameEndData.description }}</p>
+    </MineModal>
     <PlayboardCell
       v-for="cell in cellList"
       :key="cell.key"
       :cell="cell"
-      @end-game="clickOnBomb"
       @open-empty-adjacent="openEmptyAdjacent"
       @open-cells-around="openCellsAround"
     ></PlayboardCell>
@@ -14,18 +15,17 @@
 
 <script setup lang="ts">
 import { Cell, CellStatus } from "@/model/Cell";
+import { GameResultInfo } from "@/model/GameResultInfo";
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
 import { useGameStore } from "@/stores/match";
-import { useStatisticsStore } from "@/stores/statistics";
 import { storeToRefs } from "pinia";
-import { computed, reactive } from "vue";
+import { computed, reactive, watch } from "vue";
 import MineModal from "../ui/MineModal.vue";
 import PlayboardCell from "./PlayboardCell.vue";
 
 const gameStore = useGameStore();
-const statisticsStore = useStatisticsStore();
 gameStore.initGrid(Difficulty.EASY);
-const { gameGrid, gameResult } = storeToRefs(gameStore);
+const { countBombs, gameGrid, gameResult } = storeToRefs(gameStore);
 
 const cssNumColumnFr = computed(function (): string {
   return `repeat(${gameGrid.value.numCol}, 1fr)`;
@@ -39,11 +39,29 @@ const isGameEnded = computed(function (): boolean {
   return gameResult.value !== GameResult.NOT_END;
 });
 
-const clickOnBomb = (): void => {
-  gameResult.value = GameResult.LOOSE;
-  gameStore.togglePauseTimer();
-  statisticsStore.incrementLostGames();
-};
+const gameEndData = computed(function (): GameResultInfo {
+  let result: GameResultInfo;
+  if (gameResult.value === GameResult.LOOSE) {
+    result = new GameResultInfo("You lost", "Try again.");
+  } else {
+    result = new GameResultInfo("Win!", "Congrats! Well done!");
+  }
+  return result;
+});
+
+watch(countBombs, (newValue: number) => {
+  console.log("Count bombs updated!", newValue);
+  if (newValue === 0 && gameGrid.value.checkAllCellsHaveValueFromUser()) {
+    let result: GameResult;
+    if (gameGrid.value.allUserFlagsOnBombs()) {
+      result = GameResult.WIN;
+    } else {
+      result = GameResult.LOOSE;
+    }
+    gameStore.endGame(result);
+  }
+});
+
 const openEmptyAdjacent = (cell: Cell): void => {
   // gameGrid.printDebugGrid();
   gameGrid.value.automaticOpenAdjacentEmptyCell(cell);

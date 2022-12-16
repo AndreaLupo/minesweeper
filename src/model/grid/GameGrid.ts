@@ -32,7 +32,7 @@ export abstract class GameGrid implements GameStatusGrid {
     this.createGrid();
   }
 
-  get cellList() {
+  get cellList(): Cell[][] {
     return this.cells;
   }
 
@@ -53,6 +53,17 @@ export abstract class GameGrid implements GameStatusGrid {
 
   get gameComplete(): boolean {
     return this.countOpenCell() === this.totalNumCells && this.checkAllCellsHaveValueFromUser();
+  }
+
+  get allCellsAreOpenedOrFlagged(): boolean {
+    for (const cells of this.cellList) {
+      for (const cell of cells) {
+        if (!cell.isOpen && !cell.hasFlag) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   createGrid = (): void => {
@@ -121,6 +132,16 @@ export abstract class GameGrid implements GameStatusGrid {
     }
   }
 
+  getCell = (row: number, column: number): Cell => {
+    return this.cellList[row][column];
+  }
+
+  /**
+   * Return the number of bombs around the requested cell
+   * @param row 
+   * @param col 
+   * @returns 
+   */
   countBombsAround = (row: number, col: number): number => {
     if (this.cells[row][col].isBomb) {
       return BOMB;
@@ -156,6 +177,12 @@ export abstract class GameGrid implements GameStatusGrid {
     return countBomb;
   }
 
+  /**
+   * Check if the row and column requested are within the grid indexes.
+   * @param currRow 
+   * @param currCol 
+   * @returns 
+   */
   isValidCell(currRow: number, currCol: number): boolean {
     const isOutOfBound = currRow < 0 || currCol < 0 || currRow > (this.maxRow - 1) || currCol > (this.maxCol - 1);
     return !isOutOfBound;

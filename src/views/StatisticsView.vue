@@ -2,11 +2,11 @@
   <div class="grid">
     <div class="item">
       <div class="title">Win</div>
-      <div class="value">10</div>
+      <div class="value">{{ winGames }}</div>
     </div>
     <div class="item">
       <div class="title">Lost</div>
-      <div class="value">{{lostGames}}</div>
+      <div class="value">{{ lostGames }}</div>
     </div>
     <div class="item">
       <div class="title">Started</div>
@@ -14,15 +14,22 @@
     </div>
     <div class="item">
       <div class="title">Best time</div>
-      <div class="value">04:12</div>
+      <div class="value">{{ bestTimeText }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useStatisticsStore } from '@/stores/statistics';
+import { useStatisticsStore } from "@/stores/statistics";
+import { computed } from "vue";
+import dayjs from "dayjs";
 const statisticsStore = useStatisticsStore();
-const { lostGames } = statisticsStore;
+const { lostGames, winGames, bestTime } = statisticsStore;
+
+const bestTimeText = computed(() => {
+  console.log(bestTime);
+  return dayjs().minute(0).second(bestTime).format("mm:ss");
+});
 </script>
 
 <style lang="scss">
