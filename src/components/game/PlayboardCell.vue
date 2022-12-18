@@ -150,7 +150,9 @@ const openCellsAround = () => {
   padding: 1.4rem;
   background-color: $text-color-bright;
   font-size: 1.4em;
-  font-weight: bold;
+  font-family: "Chakra Petch Bold";
+  border-radius: 5px;
+  background-color: $color-brown;
 
   &.cell-mini {
     padding: 1rem;
@@ -170,19 +172,16 @@ const openCellsAround = () => {
 
   .fa-flag {
     color: red;
+    font-size: 1.3rem;
   }
 
   .fa-question {
     color: yellow;
+    font-size: 1.3rem;
   }
 
   &.num {
-    padding: 8px 1rem;
-    font-size: 1.3em;
-  }
-
-  &.num-0 {
-    background-color: $text-color-bright;
+    font-size: 1.8em;
   }
 
   @mixin num($color) {
@@ -197,6 +196,12 @@ const openCellsAround = () => {
   }
   .num-3 {
     @include num(#53c239);
+  }
+  .num-4 {
+    @include num(#b256bd);
+  }
+  .num-5 {
+    @include num(#ba2416);
   }
 }
 </style>

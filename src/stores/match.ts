@@ -71,9 +71,7 @@ export const useGameStore = defineStore("game", () => {
   }
 
   function openCellsAround(cell: Cell) {
-    console.log('Open cells with store');
     const cellsAround = reactive(gameGrid.getCellsAround(cell));
-    console.log('Is reactive?', isReactive(cellsAround));
 
 
     for (const cell of cellsAround) {

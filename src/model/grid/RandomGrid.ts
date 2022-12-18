@@ -9,10 +9,14 @@ export class RandomGrid extends GameGrid {
   }
 
   setBombs = (numBombs: number): void => {
-    for (let count = 0; count < numBombs; count++) {
+    for (let count = 0; count < numBombs;) {
       const row = Math.floor(Math.random() * this.numRow);
       const col = Math.floor(Math.random() * this.numCol);
-      this.cells[row][col].numberShown = BOMB;
+
+      if (this.cells[row][col].numberShown !== BOMB) {
+        this.cells[row][col].numberShown = BOMB;
+        count++;
+      }
     }
   };
 }
