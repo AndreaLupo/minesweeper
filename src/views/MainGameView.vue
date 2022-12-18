@@ -1,5 +1,5 @@
 <template>
-  <div class="timer-wrapper">
+  <div class="timer-wrapper" :class="additional">
     <GameStatus></GameStatus>
   </div>
   <GamePlayboard></GamePlayboard>
@@ -8,10 +8,16 @@
 <script setup lang="ts">
 import GamePlayboard from "@/components/game/GamePlayboard.vue";
 import GameStatus from "@/components/game/GameStatus.vue";
-import { FixedGrid } from "@/model/grid/FixedGrid";
 import { Difficulty } from "@/model/grid/GameGrid";
+import { useGameStore } from "@/stores/match";
+import { computed, ref } from "vue";
+const gameStore = useGameStore();
 
-const grid: FixedGrid = new FixedGrid(Difficulty.EASY);
+const difficulty = ref(gameStore.difficulty);
+
+const additional = computed(() => {
+  return { "mini-margin": difficulty.value !== Difficulty.EASY };
+});
 </script>
 
 <style scoped lang="scss">
@@ -19,5 +25,9 @@ const grid: FixedGrid = new FixedGrid(Difficulty.EASY);
   display: flex;
   justify-content: center;
   margin-bottom: 3rem;
+
+  &.mini-margin {
+    margin-bottom: 1rem;
+  }
 }
 </style>

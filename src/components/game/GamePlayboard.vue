@@ -20,11 +20,15 @@ import { Difficulty, GameResult } from "@/model/grid/GameGrid";
 import { useGameStore } from "@/stores/match";
 import { storeToRefs } from "pinia";
 import { computed, reactive, watch } from "vue";
+import { useRoute } from "vue-router";
 import MineModal from "../ui/MineModal.vue";
 import PlayboardCell from "./PlayboardCell.vue";
 
 const gameStore = useGameStore();
-gameStore.initGrid(Difficulty.EASY);
+const route = useRoute();
+const difficulty: Difficulty = route.params.difficulty as Difficulty;
+console.log(difficulty);
+gameStore.initGrid(difficulty);
 const { countBombs, gameGrid, gameResult } = storeToRefs(gameStore);
 
 const cssNumColumnFr = computed(function (): string {
@@ -59,6 +63,12 @@ watch(countBombs, (newValue: number) => {
       result = GameResult.LOOSE;
     }
     gameStore.endGame(result);
+  } else {
+    setTimeout(() => {
+      if (countBombs.value === 0) {
+        window.alert("Some error!");
+      }
+    }, 2000);
   }
 });
 

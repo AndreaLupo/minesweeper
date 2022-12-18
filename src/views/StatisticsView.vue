@@ -1,30 +1,25 @@
 <template>
-  <div class="grid">
-    <div class="item">
-      <div class="title">Win</div>
-      <div class="value">{{ winGames }}</div>
+  <div>
+    <div class="difficulty-selector">
+      <div @click="selectedDifficulty = Difficulty.EASY">EASY</div>
+      <div @click="selectedDifficulty = Difficulty.MEDIUM">MEDIUM</div>
+      <div @click="selectedDifficulty = Difficulty.DIFFICULT">DIFFICULT</div>
     </div>
-    <div class="item">
-      <div class="title">Lost</div>
-      <div class="value">{{ lostGames }}</div>
-    </div>
-    <div class="item">
-      <div class="title">Started</div>
-      <div class="value">-1</div>
-    </div>
-    <div class="item">
-      <div class="title">Best time</div>
-      <div class="value">{{ bestTimeText }}</div>
-    </div>
+    <StatisticsGrid :difficulty="selectedDifficulty"></StatisticsGrid>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useStatisticsStore } from "@/stores/statistics";
-import { computed } from "vue";
+import { useStatisticsStore, type DifficultyStats } from "@/stores/statistics";
+import { computed, ref, watch } from "vue";
 import dayjs from "dayjs";
+import StatisticsGrid from "@/components/statistics/StatisticsGrid.vue";
+import { useGameStore } from "@/stores/match";
+import { Difficulty } from "@/model/grid/GameGrid";
 const statisticsStore = useStatisticsStore();
 const { lostGames, winGames, bestTime } = statisticsStore.difficultyStats;
+
+const selectedDifficulty = ref(Difficulty.EASY);
 
 const bestTimeText = computed(() => {
   console.log(bestTime);
@@ -34,6 +29,18 @@ const bestTimeText = computed(() => {
 
 <style lang="scss">
 @import "@/assets/variables.scss";
+
+.difficulty-selector {
+  display: flex;
+  gap: 1rem;
+
+  div {
+    padding: 1rem;
+    background-color: $color-primary;
+    cursor: pointer;
+  }
+}
+
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

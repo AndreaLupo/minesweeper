@@ -28,6 +28,7 @@
   <div
     v-else
     class="cell cell-closed"
+    :class="cellMini"
     @click.left="openCell"
     @click.right="goToNextCellStatus($event)"
   ></div>
@@ -42,7 +43,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faFlag, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { useGameStore } from "@/stores/match";
-import { GameResult } from "@/model/grid/GameGrid";
+import { Difficulty, GameResult } from "@/model/grid/GameGrid";
 
 library.add(faFlag);
 library.add(faQuestion);
@@ -67,8 +68,22 @@ let cell = reactive(props.cell);
 
 const cellClass = computed(() => {
   const isZero = !cell.hasBombsNearby;
-  return { "num-0": isZero, num: !isZero };
+  let classes: { "num-0": boolean; num: boolean; "cell-mini"?: boolean } = {
+    "num-0": isZero,
+    num: !isZero,
+  };
+  classes["cell-mini"] = cellMiniCssClass()["cell-mini"];
+  return classes;
 });
+const cellMini = computed(() => {
+  return cellMiniCssClass();
+});
+function cellMiniCssClass() {
+  return {
+    "cell-mini": gameStore.gameGrid.difficulty !== Difficulty.EASY,
+  };
+}
+
 const numberShownClass = computed((): string => {
   return `num num-${cell.numberShown}`;
 });
@@ -129,6 +144,10 @@ const openCellsAround = () => {
   background-color: $text-color-bright;
   font-size: 1.4em;
   font-weight: bold;
+
+  &.cell-mini {
+    padding: 1rem;
+  }
 
   &-closed {
     background-color: $color-primary;

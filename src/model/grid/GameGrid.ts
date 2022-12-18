@@ -1,4 +1,5 @@
 import { Cell, CellStatus } from "../Cell";
+import { gameSettings } from "../GameSettings";
 
 export enum Difficulty {
   EASY = "EASY",
@@ -13,6 +14,9 @@ export enum GameResult {
 }
 
 export const BOMB: number = -1;
+
+type WhatToPrint = 'status' | 'numbers' | 'bombs';
+
 
 export interface GameStatusGrid {
   printDebugGrid(whatToPrint: string): void;
@@ -71,15 +75,20 @@ export abstract class GameGrid implements GameStatusGrid {
 
     switch (this.difficulty) {
       case Difficulty.EASY:
-        this.maxRow = 9;
-        this.maxCol = 9;
-        this.numbBombs = 10;
+        this.maxRow = gameSettings.EASY.rows;
+        this.maxCol = gameSettings.EASY.cols;
+        this.numbBombs = gameSettings.EASY.numBombs;
+        break;
+      case Difficulty.MEDIUM:
+        this.maxRow = gameSettings.MEDIUM.rows;
+        this.maxCol = gameSettings.MEDIUM.cols;
+        this.numbBombs = gameSettings.MEDIUM.numBombs;
         break;
       case Difficulty.DIFFICULT:
       default:
-        this.maxRow = 16;
-        this.maxCol = 30;
-        this.numbBombs = 99;
+        this.maxRow = gameSettings.DIFFICULT.rows;
+        this.maxCol = gameSettings.DIFFICULT.cols;
+        this.numbBombs = gameSettings.DIFFICULT.numBombs;
     }
     let countCell = 0;
     for (let index = 0; index < this.maxRow; index++) {
@@ -97,8 +106,9 @@ export abstract class GameGrid implements GameStatusGrid {
   /**
    * Useful to check the current status of the grid.
    * Print a table with the STATUS field of each cell.
+   * @
    */
-  printDebugGrid = (whatToPrint: string): void => {
+  printDebugGrid = (whatToPrint: WhatToPrint): void => {
     const table: string[] = [];
     for (let index = 0; index < this.maxRow; index++) {
       let row: string = '';

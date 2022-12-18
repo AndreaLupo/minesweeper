@@ -13,7 +13,8 @@ import router from "@/router";
 
 const start = (level: Difficulty) => {
   // set difficulty in store
-  router.replace("/play");
+  localStorage.setItem("currentGameDifficulty", level);
+  router.push({ path: `/play` });
 };
 </script>
 

@@ -1,3 +1,4 @@
+import { gameSettings } from './../model/GameSettings';
 import { useStatisticsStore } from './statistics';
 import { CellStatus } from './../model/Cell';
 import { Difficulty, GameResult } from './../model/grid/GameGrid';
@@ -8,7 +9,6 @@ import type { Cell } from '@/model/Cell';
 
 
 export const useGameStore = defineStore("game", () => {
-  const countBombs = ref(10);
   const statisticsStore = useStatisticsStore();
 
   const gameDuration = reactive({
@@ -17,7 +17,9 @@ export const useGameStore = defineStore("game", () => {
   });
   const gameResult = ref(GameResult.NOT_END);
 
-  let gameGrid = reactive(new FixedGrid(Difficulty.EASY));
+  const difficulty = ref(localStorage.getItem('currentGameDifficulty') as Difficulty);
+  const countBombs = ref(gameSettings[difficulty.value].numBombs);
+  let gameGrid = reactive(new FixedGrid(difficulty.value));
 
   const timer = setInterval(() => {
     if (!gameDuration.paused) {
@@ -38,7 +40,8 @@ export const useGameStore = defineStore("game", () => {
   }
 
   function initGrid(difficulty: Difficulty): void {
-    gameGrid = new FixedGrid(difficulty);
+    gameGrid = reactive(new FixedGrid(difficulty));
+    gameGrid.printDebugGrid('numbers');
   }
 
   function automaticopenCellsAround(cell: Cell): void {
@@ -115,6 +118,7 @@ export const useGameStore = defineStore("game", () => {
     gameDuration,
     gameGrid,
     gameResult,
+    difficulty,
     incrementBombs,
     automaticopenCellsAround,
     decrementBombs,
