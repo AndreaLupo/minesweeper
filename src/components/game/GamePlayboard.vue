@@ -1,6 +1,10 @@
 <template>
   <div class="grid">
-    <MineModal :show="isGameEnded" :title="gameEndData.title">
+    <MineModal
+      :show="showModal"
+      :title="gameEndData.title"
+      @close="showModal = false"
+    >
       <p>{{ gameEndData.description }}</p>
     </MineModal>
     <PlayboardCell
@@ -19,7 +23,7 @@ import { GameResultInfo } from "@/model/GameResultInfo";
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
 import { useGameStore } from "@/stores/match";
 import { storeToRefs } from "pinia";
-import { computed, reactive, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import MineModal from "../ui/MineModal.vue";
 import PlayboardCell from "./PlayboardCell.vue";
@@ -27,9 +31,9 @@ import PlayboardCell from "./PlayboardCell.vue";
 const gameStore = useGameStore();
 const route = useRoute();
 const difficulty: Difficulty = route.params.difficulty as Difficulty;
-console.log(difficulty);
 gameStore.initGrid(difficulty);
 const { countBombs, gameGrid, gameResult } = storeToRefs(gameStore);
+const showModal = ref(false);
 
 const cssNumColumnFr = computed(function (): string {
   return `repeat(${gameGrid.value.numCol}, 1fr)`;
@@ -53,22 +57,35 @@ const gameEndData = computed(function (): GameResultInfo {
   return result;
 });
 
+watch(gameResult, (result: GameResult) => {
+  if (result === GameResult.LOOSE) {
+    showModal.value = true;
+    gameGrid.value.openNotFlaggedCells();
+  }
+});
+
 watch(countBombs, (newValue: number) => {
   console.log("Count bombs updated!", newValue);
-  if (newValue === 0 && gameGrid.value.checkAllCellsHaveValueFromUser()) {
+
+  if (newValue === 0) {
     let result: GameResult;
-    if (gameGrid.value.allUserFlagsOnBombs()) {
-      result = GameResult.WIN;
+    if (gameGrid.value.checkAllCellsHaveValueFromUser()) {
+      if (gameGrid.value.allUserFlagsOnBombs()) {
+        result = GameResult.WIN;
+      } else {
+        result = GameResult.LOOSE;
+      }
     } else {
       result = GameResult.LOOSE;
+      setTimeout(() => {
+        if (countBombs.value === 0) {
+          window.alert("Some error!");
+        }
+      }, 2000);
     }
+    showModal.value = true;
+
     gameStore.endGame(result);
-  } else {
-    setTimeout(() => {
-      if (countBombs.value === 0) {
-        window.alert("Some error!");
-      }
-    }, 2000);
   }
 });
 

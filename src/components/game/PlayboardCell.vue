@@ -99,6 +99,13 @@ const openCell = () => {
     gameStore.endGame(GameResult.LOOSE);
   }
 
+  if (
+    cell.status === CellStatus.OPEN &&
+    cell.numberShown === gameStore.gameGrid.countFlagsAround(cell)
+  ) {
+    openCellsAround();
+  }
+
   if (!cell.hasBombsNearby) {
     // cell will be opened in automatic cell update
     // emit("openEmptyAdjacent", cell);

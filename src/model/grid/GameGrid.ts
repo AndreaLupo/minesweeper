@@ -187,6 +187,29 @@ export abstract class GameGrid implements GameStatusGrid {
     return countBomb;
   }
 
+  countFlagsAround(cell: Cell): number {
+    if (!this.isValidCell(cell.row, cell.column)) {
+      throw Error(`Cell requested (${cell.row}, ${cell.column}) is not valid`);
+    }
+
+    const minRow = cell.row - 1;
+    const minCol = cell.column - 1;
+    const maxRow = minRow + 2;
+    const maxCol = minCol + 2;
+    let countFlags = 0;
+    for (let currRow = minRow; currRow <= maxRow; currRow++) {
+      for (let currCol = minCol; currCol <= maxCol; currCol++) {
+        if (this.isValidCell(currRow, currCol)) {
+          const currCell = this.cells[currRow][currCol];
+          if (currCell.hasFlag) {
+            countFlags++;
+          }
+        }
+      }
+    }
+    return countFlags;
+  }
+
   /**
    * Check if the row and column requested are within the grid indexes.
    * @param currRow 
@@ -266,5 +289,15 @@ export abstract class GameGrid implements GameStatusGrid {
       }
     }
     return true;
+  }
+
+  openNotFlaggedCells() {
+    for (const rowCells of this.cells) {
+      for (const cell of rowCells) {
+        if (!cell.hasFlag) {
+          cell.status = CellStatus.OPEN;
+        }
+      }
+    }
   }
 }

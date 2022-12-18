@@ -1,3 +1,4 @@
+import { RandomGrid } from './../model/grid/RandomGrid';
 import { gameSettings } from './../model/GameSettings';
 import { useStatisticsStore } from './statistics';
 import { CellStatus } from './../model/Cell';
@@ -19,7 +20,7 @@ export const useGameStore = defineStore("game", () => {
 
   const difficulty = ref(localStorage.getItem('currentGameDifficulty') as Difficulty);
   const countBombs = ref(gameSettings[difficulty.value].numBombs);
-  let gameGrid = reactive(new FixedGrid(difficulty.value));
+  let gameGrid = reactive(new RandomGrid(difficulty.value));
 
   const timer = setInterval(() => {
     if (!gameDuration.paused) {
