@@ -2,7 +2,7 @@ import { RandomGrid } from './../model/grid/RandomGrid';
 import { gameSettings } from './../model/GameSettings';
 import { useStatisticsStore } from './statistics';
 import { CellStatus } from './../model/Cell';
-import { Difficulty, GameResult } from './../model/grid/GameGrid';
+import { Difficulty, GameGrid, GameResult } from './../model/grid/GameGrid';
 import { isReactive, reactive, ref } from "vue";
 import { defineStore } from "pinia";
 import { FixedGrid } from "@/model/grid/FixedGrid";
@@ -10,6 +10,7 @@ import type { Cell } from '@/model/Cell';
 
 
 export const useGameStore = defineStore("game", () => {
+  console.log('Init gameStore.');
   const statisticsStore = useStatisticsStore();
 
   const gameDuration = reactive({
@@ -20,19 +21,29 @@ export const useGameStore = defineStore("game", () => {
 
   const difficulty = ref(localStorage.getItem('currentGameDifficulty') as Difficulty);
   const countBombs = ref(gameSettings[difficulty.value].numBombs);
-  let gameGrid = reactive(new RandomGrid(difficulty.value));
 
-  const timer = setInterval(() => {
-    if (!gameDuration.paused) {
-      gameDuration.seconds++;
-    }
-  }, 1000);
+  const isTutorial = localStorage.getItem('tutorial') ? localStorage.getItem('tutorial') as unknown as boolean : false;
+
+  let gameGrid = isTutorial ? reactive(new FixedGrid(Difficulty.EASY)) : reactive(new RandomGrid(difficulty.value));
+
+  const createTimer = (): number => {
+    return setInterval(() => {
+      if (!gameDuration.paused) {
+        gameDuration.seconds++;
+      }
+    }, 1000);
+  }
+
+  let timer = createTimer();
 
   function incrementBombs(): void {
     countBombs.value++;
   }
   function decrementBombs(): void {
     countBombs.value--;
+  }
+  function restoreBombs(): void {
+    countBombs.value = gameSettings[difficulty.value].numBombs;
   }
 
   function togglePauseTimer(): boolean {
@@ -108,8 +119,15 @@ export const useGameStore = defineStore("game", () => {
   }
 
 
-  function clearTime(): void {
+  function resetTime(): void {
+    gameDuration.seconds = 0;
     clearInterval(timer);
+    timer = createTimer();
+  }
+
+  function restart(): void {
+    countBombs.value = gameSettings[difficulty.value].numBombs;
+    gameGrid.closeAllCells();
   }
 
   return {
@@ -119,14 +137,17 @@ export const useGameStore = defineStore("game", () => {
     gameResult,
     difficulty,
     incrementBombs,
-    automaticopenCellsAround,
     decrementBombs,
+    restoreBombs,
+    automaticopenCellsAround,
     initGrid,
     openCell,
     openCellsAround,
     endGame,
     numCellFlaggedAround,
-    togglePauseTimer
+    togglePauseTimer,
+    resetTime,
+    restart
   };
 
 });

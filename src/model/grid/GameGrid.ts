@@ -300,4 +300,11 @@ export abstract class GameGrid implements GameStatusGrid {
       }
     }
   }
+  closeAllCells() {
+    for (const rowCells of this.cells) {
+      for (const cell of rowCells) {
+        cell.status = CellStatus.CLOSED;
+      }
+    }
+  }
 }

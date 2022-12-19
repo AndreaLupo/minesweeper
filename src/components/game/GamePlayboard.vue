@@ -6,6 +6,11 @@
       @close="showModal = false"
     >
       <p>{{ gameEndData.description }}</p>
+      <div class="buttons">
+        <div class="btn" @click="newGame">New game</div>
+        <div class="btn" @click="restartGame">Restart this game</div>
+        <div class="btn" @click="goToHome">Go to menu</div>
+      </div>
     </MineModal>
     <PlayboardCell
       v-for="cell in cellList"
@@ -21,6 +26,7 @@
 import { Cell, CellStatus } from "@/model/Cell";
 import { GameResultInfo } from "@/model/GameResultInfo";
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
+import router from "@/router";
 import { useGameStore } from "@/stores/match";
 import { storeToRefs } from "pinia";
 import { computed, reactive, ref, watch } from "vue";
@@ -43,10 +49,6 @@ const cellList = computed(function (): Array<Cell> {
   return gameGrid.value.cellList.flatMap((el) => el);
 });
 
-const isGameEnded = computed(function (): boolean {
-  return gameResult.value !== GameResult.NOT_END;
-});
-
 const gameEndData = computed(function (): GameResultInfo {
   let result: GameResultInfo;
   if (gameResult.value === GameResult.LOOSE) {
@@ -57,6 +59,13 @@ const gameEndData = computed(function (): GameResultInfo {
   return result;
 });
 
+const gameComplete = computed(() => {
+  return (
+    gameGrid.value.countOpenCell() === gameGrid.value.totalNumCells &&
+    gameGrid.value.checkAllCellsHaveValueFromUser()
+  );
+});
+
 watch(gameResult, (result: GameResult) => {
   if (result === GameResult.LOOSE) {
     showModal.value = true;
@@ -64,30 +73,29 @@ watch(gameResult, (result: GameResult) => {
   }
 });
 
-watch(countBombs, (newValue: number) => {
-  console.log("Count bombs updated!", newValue);
+watch(countBombs, (bombsCount: number) => {
+  console.log("Count bombs updated!", bombsCount);
+  isGameEnding();
+});
+watch(gameComplete, () => {
+  console.log("Game complete updated!");
+  isGameEnding();
+});
 
-  if (newValue === 0) {
+const isGameEnding = (): void => {
+  console.log("Is ending?", countBombs.value, gameComplete);
+  if (countBombs.value === 0 && gameComplete) {
+    console.log("Is ended!");
     let result: GameResult;
-    if (gameGrid.value.checkAllCellsHaveValueFromUser()) {
-      if (gameGrid.value.allUserFlagsOnBombs()) {
-        result = GameResult.WIN;
-      } else {
-        result = GameResult.LOOSE;
-      }
+    if (gameGrid.value.allUserFlagsOnBombs()) {
+      result = GameResult.WIN;
     } else {
       result = GameResult.LOOSE;
-      setTimeout(() => {
-        if (countBombs.value === 0) {
-          window.alert("Some error!");
-        }
-      }, 2000);
     }
     showModal.value = true;
-
     gameStore.endGame(result);
   }
-});
+};
 
 const openEmptyAdjacent = (cell: Cell): void => {
   // gameGrid.printDebugGrid();
@@ -112,6 +120,21 @@ const openCellsAround = (cell: Cell): void => {
     }
   }
 };
+
+const newGame = () => {
+  location.reload();
+};
+const restartGame = () => {
+  gameGrid.value.closeAllCells();
+  gameResult.value = GameResult.NOT_END;
+  gameStore.restoreBombs();
+  gameStore.resetTime();
+  showModal.value = false;
+};
+const goToHome = () => {
+  router.push("");
+  showModal.value = false;
+};
 </script>
 
 <style scoped lang="scss">
@@ -120,6 +143,12 @@ const openCellsAround = (cell: Cell): void => {
   grid-template-columns: v-bind(cssNumColumnFr);
   column-gap: 6px;
   row-gap: 6px;
+}
+
+.buttons {
+  .btn {
+    cursor: pointer;
+  }
 }
 
 .row {
