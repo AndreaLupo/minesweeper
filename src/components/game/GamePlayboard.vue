@@ -4,12 +4,15 @@
       :show="showModal"
       :title="gameEndData.title"
       @close="showModal = false"
+      :win="gameEndData.win"
+      :fixed="true"
     >
       <p>{{ gameEndData.description }}</p>
       <div class="buttons">
         <div class="btn" @click="newGame">New game</div>
         <div class="btn" @click="restartGame">Restart this game</div>
         <div class="btn" @click="goToHome">Go to menu</div>
+        <div class="btn" @click="showModal = false">Back to game</div>
       </div>
     </MineModal>
     <PlayboardCell
@@ -52,9 +55,9 @@ const cellList = computed(function (): Array<Cell> {
 const gameEndData = computed(function (): GameResultInfo {
   let result: GameResultInfo;
   if (gameResult.value === GameResult.LOOSE) {
-    result = new GameResultInfo("You lost", "Try again.");
+    result = new GameResultInfo("You lost", "Try again.", false);
   } else {
-    result = new GameResultInfo("Win!", "Congrats! Well done!");
+    result = new GameResultInfo("Win!", "Congrats! Well done!", true);
   }
   return result;
 });
@@ -138,6 +141,7 @@ const goToHome = () => {
 </script>
 
 <style scoped lang="scss">
+@import "@/assets/variables.scss";
 .grid {
   display: grid;
   grid-template-columns: v-bind(cssNumColumnFr);
@@ -146,7 +150,18 @@ const goToHome = () => {
 }
 
 .buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
   .btn {
+    display: block;
+    width: 50%;
+    padding: 1rem;
+    border-radius: 5px;
+    background-color: $color-primary;
+    text-transform: uppercase;
+    text-align: center;
     cursor: pointer;
   }
 }

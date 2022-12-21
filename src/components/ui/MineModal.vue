@@ -3,7 +3,7 @@
     <div v-if="show" @click="tryClose" class="backdrop"></div>
     <transition name="dialog">
       <dialog open v-if="show">
-        <header>
+        <header :class="classHeader">
           <slot name="header">
             <h2>{{ title }}</h2>
           </slot>
@@ -22,6 +22,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 const props = defineProps({
   show: {
     type: Boolean,
@@ -36,6 +38,10 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  win: {
+    type: Boolean,
+    required: false,
+  },
 });
 const emit = defineEmits(["close"]);
 
@@ -45,9 +51,30 @@ const tryClose = () => {
   }
   emit("close");
 };
+
+const classHeader = computed((): string => {
+  let _class = "";
+
+  if (props.win != undefined) {
+    if (props.win) {
+      _class = "green";
+    } else {
+      _class = "red";
+    }
+  }
+
+  return _class;
+});
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "@/assets/variables.scss";
+
+:export {
+  red: red;
+  green: $color-secondary;
+}
+
 .backdrop {
   position: fixed;
   top: 0;
@@ -74,14 +101,20 @@ dialog {
 }
 
 header {
-  background-color: #3a0061;
+  background-color: $color-brown;
+  &.red {
+    background-color: #990000;
+  }
+  &.green {
+    background-color: $color-secondary;
+  }
+
   color: white;
   width: 100%;
   padding: 1rem;
-}
-
-header h2 {
-  margin: 0;
+  h2 {
+    margin: 0;
+  }
 }
 
 section {

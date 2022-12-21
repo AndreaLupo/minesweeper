@@ -6,7 +6,9 @@
     @click.left="openCell"
     @click.right="goToNextCellStatus"
   >
-    <span v-if="cell.status === CellStatus.OPEN && cell.isBomb">B</span>
+    <span v-if="cell.status === CellStatus.OPEN && cell.isBomb">
+      <font-awesome-icon icon="fa-solid fa-bomb" />
+    </span>
     <span
       v-else-if="cell.status === CellStatus.OPEN && !cell.hasBombsNearby"
       class="num-0"
@@ -41,10 +43,11 @@ import { computed, reactive, watch } from "vue";
 /* import the fontawesome core */
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faFlag, faQuestion } from "@fortawesome/free-solid-svg-icons";
+import { faBomb, faFlag, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { useGameStore } from "@/stores/match";
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
 
+library.add(faBomb);
 library.add(faFlag);
 library.add(faQuestion);
 
@@ -96,7 +99,9 @@ const openCell = () => {
 
   if (cell.isBomb) {
     cell.status = CellStatus.BOOM;
-    gameStore.endGame(GameResult.LOOSE);
+    setInterval(() => {
+      gameStore.endGame(GameResult.LOOSE);
+    }, 300);
   }
 
   if (
