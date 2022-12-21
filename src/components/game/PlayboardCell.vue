@@ -99,7 +99,7 @@ const openCell = () => {
 
   if (cell.isBomb) {
     cell.status = CellStatus.BOOM;
-    setInterval(() => {
+    setTimeout(() => {
       gameStore.endGame(GameResult.LOOSE);
     }, 300);
   }
