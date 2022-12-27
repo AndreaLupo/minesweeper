@@ -20,11 +20,13 @@ export const useGameStore = defineStore("game", () => {
   const gameResult = ref(GameResult.NOT_END);
 
   const difficulty = ref(localStorage.getItem('currentGameDifficulty') as Difficulty);
+  console.log('Difficulty in store:', difficulty.value);
   const countBombs = ref(gameSettings[difficulty.value].numBombs);
 
-  const isTutorial = localStorage.getItem('tutorial') ? localStorage.getItem('tutorial') as unknown as boolean : false;
 
-  let gameGrid = isTutorial ? reactive(new FixedGrid(Difficulty.EASY)) : reactive(new RandomGrid(difficulty.value));
+
+
+  let gameGrid = isTutorial() ? reactive(new FixedGrid(Difficulty.EASY)) : reactive(new RandomGrid(difficulty.value));
 
   const createTimer = (): number => {
     return setInterval(() => {
@@ -35,6 +37,29 @@ export const useGameStore = defineStore("game", () => {
   }
 
   let timer = createTimer();
+
+  function isTutorial() {
+    const tutorialActive = localStorage.getItem('tutorial');
+    if (tutorialActive === 'true') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function setTutorial(tutorialActive: boolean) {
+    localStorage.setItem('tutorial', tutorialActive.toString());
+  }
+
+  function getDifficulty() {
+    const difficulty = localStorage.getItem('currentGameDifficulty') as Difficulty;
+    return ref(difficulty);
+  }
+  function setDifficulty(diff: Difficulty) {
+    localStorage.setItem("currentGameDifficulty", diff);
+    difficulty.value = diff;
+
+  }
 
   function incrementBombs(): void {
     countBombs.value++;
@@ -61,12 +86,13 @@ export const useGameStore = defineStore("game", () => {
 
   function initGrid(difficulty: Difficulty): void {
     console.log('InitGrid for difficulty', difficulty);
-    if (isTutorial) {
+    if (isTutorial()) {
       gameGrid = reactive(new FixedGrid(difficulty));
     } else {
       gameGrid = reactive(new RandomGrid(difficulty));
     }
-    gameGrid.printDebugGrid('numbers');
+    // gameGrid.printDebugGrid('numbers');
+    console.log(`Rows: ${gameGrid.numRow}, Cols: ${gameGrid.numCol}`);
   }
 
   function automaticopenCellsAround(cell: Cell): void {
@@ -137,12 +163,16 @@ export const useGameStore = defineStore("game", () => {
     gameGrid.closeAllCells();
   }
 
+
+  console.log('Game store init completed');
   return {
     countBombs,
     gameDuration,
     gameGrid,
     gameResult,
     difficulty,
+    setTutorial,
+    setDifficulty,
     incrementBombs,
     decrementBombs,
     restoreBombs,

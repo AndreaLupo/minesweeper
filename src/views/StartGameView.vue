@@ -1,20 +1,24 @@
 <template>
   <span class="text">Choose difficulty</span>
   <div class="difficulties">
-    <a href="#" @click="start(Difficulty.EASY)">Easy</a>
-    <a href="#" @click="start(Difficulty.MEDIUM)">Medium</a>
-    <a href="#" @click="start(Difficulty.DIFFICULT)">Hard</a>
+    <a href="#" @click.prevent="start(Difficulty.EASY)">Easy</a>
+    <a href="#" @click.prevent="start(Difficulty.MEDIUM)">Medium</a>
+    <a href="#" @click.prevent="start(Difficulty.DIFFICULT)">Hard</a>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Difficulty } from "@/model/grid/GameGrid";
 import router from "@/router";
+import { useGameStore } from "@/stores/match";
+const gameStore = useGameStore();
 
 const start = (level: Difficulty) => {
   // set difficulty in store
-  localStorage.setItem("currentGameDifficulty", level);
-  router.push({ path: `/play` });
+  console.log("Start!");
+  gameStore.setDifficulty(level);
+  gameStore.setTutorial(false);
+  router.replace({ path: `/play` });
 };
 </script>
 
