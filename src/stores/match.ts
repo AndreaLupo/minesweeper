@@ -46,13 +46,26 @@ export const useGameStore = defineStore("game", () => {
     countBombs.value = gameSettings[difficulty.value].numBombs;
   }
 
+
   function togglePauseTimer(): boolean {
     gameDuration.paused = !gameDuration.paused;
     return gameDuration.paused;
   }
 
+  function resetTime(): void {
+    gameDuration.seconds = 0;
+    clearInterval(timer);
+    timer = createTimer();
+  }
+
+
   function initGrid(difficulty: Difficulty): void {
-    gameGrid = reactive(new FixedGrid(difficulty));
+    console.log('InitGrid for difficulty', difficulty);
+    if (isTutorial) {
+      gameGrid = reactive(new FixedGrid(difficulty));
+    } else {
+      gameGrid = reactive(new RandomGrid(difficulty));
+    }
     gameGrid.printDebugGrid('numbers');
   }
 
@@ -118,12 +131,6 @@ export const useGameStore = defineStore("game", () => {
     return cellsAround.filter(cell => cell.hasFlag).length;
   }
 
-
-  function resetTime(): void {
-    gameDuration.seconds = 0;
-    clearInterval(timer);
-    timer = createTimer();
-  }
 
   function restart(): void {
     countBombs.value = gameSettings[difficulty.value].numBombs;

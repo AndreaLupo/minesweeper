@@ -40,18 +40,18 @@ export abstract class GameGrid implements GameStatusGrid {
     return this.cells;
   }
 
-  get numRow() {
+  get numRow(): number {
     return this.maxRow;
   }
 
-  get numCol() {
+  get numCol(): number {
     return this.maxCol;
   }
 
   /**
    * Return the number of cell present in the grid.
    */
-  get totalNumCells() {
+  get totalNumCells(): number {
     return this.maxRow * this.maxCol;
   }
 

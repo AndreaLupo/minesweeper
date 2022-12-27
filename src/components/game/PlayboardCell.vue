@@ -115,7 +115,7 @@ const openCell = () => {
     // cell will be opened in automatic cell update
     // emit("openEmptyAdjacent", cell);
     openCellsAround();
-    gameStore.openCellsAround(cell);
+    // gameStore.openCellsAround(cell);
   } else {
     cell.status = CellStatus.OPEN;
   }

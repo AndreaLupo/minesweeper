@@ -33,13 +33,15 @@ import router from "@/router";
 import { useGameStore } from "@/stores/match";
 import { storeToRefs } from "pinia";
 import { computed, reactive, ref, watch } from "vue";
-import { useRoute } from "vue-router";
 import MineModal from "../ui/MineModal.vue";
 import PlayboardCell from "./PlayboardCell.vue";
 
+console.log("GamePlayboard created");
+
 const gameStore = useGameStore();
-const route = useRoute();
-const difficulty: Difficulty = route.params.difficulty as Difficulty;
+const difficulty: Difficulty = localStorage.getItem(
+  "currentGameDifficulty"
+) as Difficulty;
 gameStore.initGrid(difficulty);
 const { countBombs, gameGrid, gameResult } = storeToRefs(gameStore);
 const showModal = ref(false);
@@ -116,8 +118,11 @@ const openCellsAround = (cell: Cell): void => {
   for (const cell of cells) {
     if (!cell.hasFlag && cell.isBomb) {
       gameResult.value = GameResult.LOOSE;
-    } else if (!cell.hasFlag) {
+    } else if (!cell.hasFlag && !cell.isOpen) {
       cell.status = CellStatus.OPEN;
+      if (!cell.hasBombsNearby) {
+        openCellsAround(cell);
+      }
     } else {
       // cell has flag - n
     }
