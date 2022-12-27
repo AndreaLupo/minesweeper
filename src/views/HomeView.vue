@@ -12,6 +12,8 @@
 
 <style lang="scss" scoped>
 @import "@/assets/variables.scss";
+@import "@/assets/mixins.scss";
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -25,27 +27,6 @@
     margin-bottom: 1rem;
   }
 
-  a:link {
-    width: 100%;
-    background-color: $color-primary;
-    color: $text-color;
-    font-family: inherit;
-    text-decoration: none;
-    text-align: center;
-    font-size: 1.3em;
-    padding: 1rem;
-    border: 0px;
-    margin-bottom: 4px;
-    border-radius: 15px;
-    cursor: pointer;
-  }
-
-  a:hover,
-  a:active {
-    background-color: $color-primary-bright;
-    border: 4px solid $color-secondary;
-    margin: 3px;
-    transform: scale(1.1);
-  }
+  @include animated-button;
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
   <span class="text">Choose difficulty</span>
   <div class="difficulties">
-    <div class="diff" @click="start(Difficulty.EASY)">Easy</div>
-    <div class="diff" @click="start(Difficulty.MEDIUM)">Medium</div>
-    <div class="diff" @click="start(Difficulty.DIFFICULT)">Hard</div>
+    <a href="#" @click="start(Difficulty.EASY)">Easy</a>
+    <a href="#" @click="start(Difficulty.MEDIUM)">Medium</a>
+    <a href="#" @click="start(Difficulty.DIFFICULT)">Hard</a>
   </div>
 </template>
 
@@ -20,7 +20,7 @@ const start = (level: Difficulty) => {
 
 <style lang="scss" scoped>
 @import "@/assets/variables.scss";
-
+@import "@/assets/mixins.scss";
 .text {
   text-align: center;
   font-size: 2em;
@@ -42,4 +42,5 @@ const start = (level: Difficulty) => {
     font-size: 1.2em;
   }
 }
+@include animated-button;
 </style>
