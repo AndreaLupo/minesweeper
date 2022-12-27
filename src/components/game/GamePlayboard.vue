@@ -36,8 +36,6 @@ import { computed, reactive, ref, watch } from "vue";
 import MineModal from "../ui/MineModal.vue";
 import PlayboardCell from "./PlayboardCell.vue";
 
-console.log("GamePlayboard created");
-
 const gameStore = useGameStore();
 const difficulty: Difficulty = localStorage.getItem(
   "currentGameDifficulty"
@@ -140,9 +138,11 @@ const restartGame = () => {
   showModal.value = false;
 };
 const goToHome = () => {
-  router.push("");
+  router.push("/");
   showModal.value = false;
 };
+
+console.log("GamePlayboard created");
 </script>
 
 <style scoped lang="scss">
