@@ -77,18 +77,14 @@ watch(gameResult, (result: GameResult) => {
 });
 
 watch(countBombs, (bombsCount: number) => {
-  console.log("Count bombs updated!", bombsCount);
   isGameEnding();
 });
 watch(gameComplete, () => {
-  console.log("Game complete updated!");
   isGameEnding();
 });
 
 const isGameEnding = (): void => {
-  console.log("Is ending?", countBombs.value, gameComplete);
   if (countBombs.value === 0 && gameComplete) {
-    console.log("Is ended!");
     let result: GameResult;
     if (gameGrid.value.allUserFlagsOnBombs()) {
       result = GameResult.WIN;

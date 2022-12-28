@@ -55,7 +55,6 @@ export const useStatisticsStore = defineStore("statistics", () => {
    * @returns 
    */
   function checkAndUpdateBestTime(time: number): boolean {
-    console.log('Time:', time);
     if (difficultyStats.bestTime > time) {
       setBestTime(time);
       return true;
@@ -64,7 +63,6 @@ export const useStatisticsStore = defineStore("statistics", () => {
   }
 
   function setBestTime(time: number) {
-    console.log('New best time!');
     difficultyStats.bestTime = time;
     localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }

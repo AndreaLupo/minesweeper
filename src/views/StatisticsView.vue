@@ -10,21 +10,11 @@
 </template>
 
 <script setup lang="ts">
-import { useStatisticsStore, type DifficultyStats } from "@/stores/statistics";
-import { computed, ref, watch } from "vue";
-import dayjs from "dayjs";
+import { ref } from "vue";
 import StatisticsGrid from "@/components/statistics/StatisticsGrid.vue";
-import { useGameStore } from "@/stores/game";
 import { Difficulty } from "@/model/grid/GameGrid";
-const statisticsStore = useStatisticsStore();
-const { lostGames, winGames, bestTime } = statisticsStore.difficultyStats;
 
 const selectedDifficulty = ref(Difficulty.EASY);
-
-const bestTimeText = computed(() => {
-  console.log(bestTime);
-  return dayjs().minute(0).second(bestTime).format("mm:ss");
-});
 </script>
 
 <style lang="scss">

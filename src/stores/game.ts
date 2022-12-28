@@ -48,7 +48,6 @@ export const useGameStore = defineStore("game", () => {
   }
 
   function setTutorial(tutorialActive: boolean) {
-    console.log('Set tutorial to ', tutorialActive);
     localStorage.setItem('tutorial', tutorialActive.toString());
   }
 
