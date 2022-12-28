@@ -9,11 +9,12 @@
 import GamePlayboard from "@/components/game/GamePlayboard.vue";
 import GameStatus from "@/components/game/GameStatus.vue";
 import { Difficulty } from "@/model/grid/GameGrid";
-import { useGameStore } from "@/stores/match";
+import { useGameStore } from "@/stores/game";
 import { computed, ref } from "vue";
 const gameStore = useGameStore();
 
 const difficulty = ref(gameStore.difficulty);
+console.log(`In-game difficulty: ${difficulty.value}`);
 
 const additional = computed(() => {
   return { "mini-margin": difficulty.value !== Difficulty.EASY };

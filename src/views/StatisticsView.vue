@@ -14,7 +14,7 @@ import { useStatisticsStore, type DifficultyStats } from "@/stores/statistics";
 import { computed, ref, watch } from "vue";
 import dayjs from "dayjs";
 import StatisticsGrid from "@/components/statistics/StatisticsGrid.vue";
-import { useGameStore } from "@/stores/match";
+import { useGameStore } from "@/stores/game";
 import { Difficulty } from "@/model/grid/GameGrid";
 const statisticsStore = useStatisticsStore();
 const { lostGames, winGames, bestTime } = statisticsStore.difficultyStats;

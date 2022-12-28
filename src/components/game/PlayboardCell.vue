@@ -44,7 +44,7 @@ import { computed, reactive, watch } from "vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faBomb, faFlag, faQuestion } from "@fortawesome/free-solid-svg-icons";
-import { useGameStore } from "@/stores/match";
+import { useGameStore } from "@/stores/game";
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
 
 library.add(faBomb);

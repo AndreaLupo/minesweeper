@@ -30,7 +30,7 @@ import { Cell, CellStatus } from "@/model/Cell";
 import { GameResultInfo } from "@/model/GameResultInfo";
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
 import router from "@/router";
-import { useGameStore } from "@/stores/match";
+import { useGameStore } from "@/stores/game";
 import { storeToRefs } from "pinia";
 import { computed, reactive, ref, watch } from "vue";
 import MineModal from "../ui/MineModal.vue";

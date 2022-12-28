@@ -1,8 +1,8 @@
-import { RandomGrid } from './../model/grid/RandomGrid';
-import { gameSettings } from './../model/GameSettings';
+import { RandomGrid } from '../model/grid/RandomGrid';
+import { gameSettings } from '../model/GameSettings';
 import { useStatisticsStore } from './statistics';
-import { CellStatus } from './../model/Cell';
-import { Difficulty, GameGrid, GameResult } from './../model/grid/GameGrid';
+import { CellStatus } from '../model/Cell';
+import { Difficulty, GameGrid, GameResult } from '../model/grid/GameGrid';
 import { isReactive, reactive, ref } from "vue";
 import { defineStore } from "pinia";
 import { FixedGrid } from "@/model/grid/FixedGrid";
@@ -48,6 +48,7 @@ export const useGameStore = defineStore("game", () => {
   }
 
   function setTutorial(tutorialActive: boolean) {
+    console.log('Set tutorial to ', tutorialActive);
     localStorage.setItem('tutorial', tutorialActive.toString());
   }
 
@@ -85,7 +86,7 @@ export const useGameStore = defineStore("game", () => {
 
 
   function initGrid(difficulty: Difficulty): void {
-    console.log('InitGrid for difficulty', difficulty);
+    console.log(`InitGrid for difficulty ${difficulty} with tutorial? ${isTutorial()}`);
     if (isTutorial()) {
       gameGrid = reactive(new FixedGrid(difficulty));
     } else {

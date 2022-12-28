@@ -10,7 +10,7 @@ import GameTimer from "./GameTimer.vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faBomb } from "@fortawesome/free-solid-svg-icons";
-import { useGameStore } from "@/stores/match";
+import { useGameStore } from "@/stores/game";
 import { storeToRefs } from "pinia";
 
 const gameStore = useGameStore();

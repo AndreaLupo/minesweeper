@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { useGameStore } from "@/stores/match";
+import { useGameStore } from "@/stores/game";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 

@@ -10,14 +10,10 @@
 <script setup lang="ts">
 import { Difficulty } from "@/model/grid/GameGrid";
 import router from "@/router";
-import { useGameStore } from "@/stores/match";
-const gameStore = useGameStore();
 
 const start = (level: Difficulty) => {
-  // set difficulty in store
-  console.log("Start!");
-  gameStore.setDifficulty(level);
-  gameStore.setTutorial(false);
+  localStorage.setItem("tutorial", "false");
+  localStorage.setItem("currentGameDifficulty", level);
   router.replace({ path: `/play` });
 };
 </script>
