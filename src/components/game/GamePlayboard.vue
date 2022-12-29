@@ -23,7 +23,12 @@
       @open-cells-around="openCellsAround"
     ></PlayboardCell>
   </div>
-  <input @keydown="manageKeyboardInput" autofocus ref="keyDetector" />
+  <input
+    class="hidden-input"
+    @keydown="manageKeyboardInput"
+    autofocus
+    ref="keyDetector"
+  />
 </template>
 
 <script setup lang="ts">
@@ -205,6 +210,7 @@ console.log("GamePlayboard created");
   }
 }
 
-.row {
+.hidden-input {
+  opacity: 0;
 }
 </style>
