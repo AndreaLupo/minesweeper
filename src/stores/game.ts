@@ -1,3 +1,4 @@
+import type { SelectDirection } from './../model/SelectDirection';
 import { RandomGrid } from '../model/grid/RandomGrid';
 import { gameSettings } from '../model/GameSettings';
 import { useStatisticsStore } from './statistics';
@@ -24,9 +25,8 @@ export const useGameStore = defineStore("game", () => {
   const countBombs = ref(gameSettings[difficulty.value].numBombs);
 
 
-
-
   let gameGrid = isTutorial() ? reactive(new FixedGrid(Difficulty.EASY)) : reactive(new RandomGrid(difficulty.value));
+  const selectedCell = ref<Cell>(gameGrid.getCell(0, 0));
 
   const createTimer = (): number => {
     return setInterval(() => {
@@ -136,6 +136,41 @@ export const useGameStore = defineStore("game", () => {
     cell.status = CellStatus.OPEN;
   }
 
+  function selectCell(direction: SelectDirection) {
+    if (selectedCell.value == null) {
+      selectedCell.value = gameGrid.getCell(0, 0);
+      return;
+    }
+    let newRow: number;
+    let newCol: number;
+    switch (direction) {
+      case 'DOWN':
+        newCol = selectedCell.value.column;
+        newRow = (selectedCell.value.row + 1) % gameGrid.numRow;
+        break;
+      case 'LEFT':
+        newCol = (selectedCell.value.column - 1) % gameGrid.numCol;
+        newRow = selectedCell.value.row;
+        break;
+      case 'RIGHT':
+        newCol = (selectedCell.value.column + 1) % gameGrid.numCol;
+        newRow = selectedCell.value.row;
+        break;
+      case 'UP':
+        newCol = selectedCell.value.column;
+        newRow = (selectedCell.value.row - 1) % gameGrid.numRow;
+        break;
+    }
+    selectedCell.value = gameGrid.getCell(newRow, newCol);
+  }
+
+  function isCellSelected(cell: Cell) {
+    if (selectedCell.value == null) {
+      return false;
+    }
+    return selectedCell.value.column === cell.column && selectedCell.value.row === cell.row;
+  }
+
   function endGame(result: GameResult) {
     console.log('End game with store!');
     gameResult.value = result;
@@ -171,8 +206,11 @@ export const useGameStore = defineStore("game", () => {
     gameGrid,
     gameResult,
     difficulty,
+    selectedCell,
     setTutorial,
     setDifficulty,
+    selectCell,
+    isCellSelected,
     incrementBombs,
     decrementBombs,
     restoreBombs,

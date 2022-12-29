@@ -1,5 +1,5 @@
 <template>
-  <div class="grid">
+  <div class="grid" @keydown="manageKeyboardInput">
     <MineModal
       :show="showModal"
       :title="gameEndData.title"
@@ -23,16 +23,18 @@
       @open-cells-around="openCellsAround"
     ></PlayboardCell>
   </div>
+  <input @keydown="manageKeyboardInput" autofocus ref="keyDetector" />
 </template>
 
 <script setup lang="ts">
 import { Cell, CellStatus } from "@/model/Cell";
 import { GameResultInfo } from "@/model/GameResultInfo";
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
+import type { InputFocusable } from "@/model/InputFocusable";
 import router from "@/router";
 import { useGameStore } from "@/stores/game";
 import { storeToRefs } from "pinia";
-import { computed, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import MineModal from "../ui/MineModal.vue";
 import PlayboardCell from "./PlayboardCell.vue";
 
@@ -43,6 +45,9 @@ const difficulty: Difficulty = localStorage.getItem(
 gameStore.initGrid(difficulty);
 const { countBombs, gameGrid, gameResult } = storeToRefs(gameStore);
 const showModal = ref(false);
+// null for initial value, focus for input
+
+const keyDetector = ref<InputFocusable>(null);
 
 const cssNumColumnFr = computed(function (): string {
   return `repeat(${gameGrid.value.numCol}, 1fr)`;
@@ -83,6 +88,15 @@ watch(gameComplete, () => {
   isGameEnding();
 });
 
+onMounted(() => {
+  const timer = setInterval(() => {
+    // set focus on hidden input. 1 second is enough since the user requires some time to switch from mouse to keyboard.
+    if (keyDetector.value) {
+      keyDetector.value.focus();
+    }
+  }, 1000);
+});
+
 const isGameEnding = (): void => {
   if (countBombs.value === 0 && gameComplete) {
     let result: GameResult;
@@ -99,7 +113,7 @@ const isGameEnding = (): void => {
 const openEmptyAdjacent = (cell: Cell): void => {
   // gameGrid.printDebugGrid();
   gameGrid.value.automaticOpenAdjacentEmptyCell(cell);
-  /* 
+  /*
   doesnt work
   const cellsAround: Cell[] = gameGrid.value.getCellsAround(cell);
   for (const cellAround of cellsAround) {
@@ -120,6 +134,30 @@ const openCellsAround = (cell: Cell): void => {
     } else {
       // cell has flag - n
     }
+  }
+};
+
+const manageKeyboardInput = (event: KeyboardEvent) => {
+  console.log("Keydown from parent");
+  switch (event.code) {
+    case "ArrowUp":
+      gameStore.selectCell("UP");
+      break;
+    case "ArrowDown":
+      gameStore.selectCell("DOWN");
+      break;
+    case "ArrowLeft":
+      gameStore.selectCell("LEFT");
+      break;
+    case "ArrowRight":
+      gameStore.selectCell("RIGHT");
+      break;
+    case "Space":
+      gameStore.openCell(gameStore.selectedCell);
+      break;
+    case "KeyB":
+      // set bomb/question
+      break;
   }
 };
 

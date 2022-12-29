@@ -1,0 +1,1 @@
+export type InputFocusable = null | { focus: () => null };

@@ -30,7 +30,7 @@
   <div
     v-else
     class="cell cell-closed"
-    :class="cellMini"
+    :class="closedCssClass"
     @click.left="openCell"
     @click.right="goToNextCellStatus($event)"
   ></div>
@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 import { Cell, CellStatus } from "@/model/Cell";
-import { computed, reactive, watch } from "vue";
+import { computed, isReactive, reactive, ref, watch } from "vue";
 
 /* import the fontawesome core */
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -46,49 +46,78 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faBomb, faFlag, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { useGameStore } from "@/stores/game";
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
+import { storeToRefs } from "pinia";
 
 library.add(faBomb);
 library.add(faFlag);
 library.add(faQuestion);
 
 const gameStore = useGameStore();
-/*
-console.log("Grid reactive? ", isReactive(gameStore.gameGrid));
+
+/* console.log("Grid reactive? ", isReactive(gameStore.gameGrid));
 console.log("Cells reactive? ", isReactive(gameStore.gameGrid.cellList));
+console.log("Cell reactive? ", isReactive(gameStore.gameGrid.cellList[0][0]));
 console.log(
   "Status reactive? ",
   isReactive(gameStore.gameGrid.cellList[0][0].status)
 );
-console.log("Num row reactive? ", isReactive(gameStore.gameGrid.numRow));
-*/
+console.log("Num row reactive? ", isReactive(gameStore.gameGrid.numRow)); */
+
+const { selectedCell } = storeToRefs(gameStore);
+const selected = reactive({ isSelected: false });
+
 const emit = defineEmits(["openEmptyAdjacent", "openCellsAround"]);
 
 const props = defineProps({
   cell: { type: Cell, required: true },
 });
 
+// console.log("Prop cell reactive?", isReactive(props.cell));
 let cell = reactive(props.cell);
 
 const cellClass = computed(() => {
+  console.log("Updating cell class!");
   const isZero = !cell.hasBombsNearby;
-  let classes: { "num-0": boolean; num: boolean; "cell-mini"?: boolean } = {
+  let classes: {
+    "num-0": boolean;
+    num: boolean;
+    "cell-mini"?: boolean;
+    selected?: boolean;
+  } = {
     "num-0": isZero,
     num: !isZero,
   };
   classes["cell-mini"] = cellMiniCssClass()["cell-mini"];
+  classes["selected"] = isSelected()["selected"];
   return classes;
 });
-const cellMini = computed(() => {
-  return cellMiniCssClass();
+const closedCssClass = computed(() => {
+  return { ...cellMiniCssClass(), ...isSelected() };
 });
 function cellMiniCssClass() {
   return {
     "cell-mini": gameStore.gameGrid.difficulty !== Difficulty.EASY,
   };
 }
+function isSelected() {
+  return {
+    selected: selected.isSelected,
+  };
+}
 
 const numberShownClass = computed((): string => {
   return `num num-${cell.numberShown}`;
+});
+
+watch(selectedCell, (newSelectedCell: Cell) => {
+  if (gameStore.isCellSelected(cell)) {
+    // add class selected
+    selected.isSelected = true;
+    console.log("This cell is selected!", cell.row, cell.column);
+  } else {
+    // remove class selected
+    selected.isSelected = false;
+  }
 });
 
 const openCell = () => {
@@ -173,6 +202,13 @@ const openCellsAround = () => {
     left: 50%;
     transform: translate(-50%, -50%);
     user-select: none;
+  }
+
+  &.selected {
+    // transform: scale(1.2);
+    box-sizing: border-box;
+    box-shadow: inset 0px 0px 0px 3px $color-accent;
+    background-color: $color-primary-bright;
   }
 
   .fa-flag {
