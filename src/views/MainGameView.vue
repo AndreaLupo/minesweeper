@@ -14,7 +14,6 @@ import { computed } from "vue";
 const gameStore = useGameStore();
 
 const difficulty = gameStore.difficulty;
-console.log(`In-game difficulty: ${difficulty}`);
 
 const additional = computed(() => {
   return { "mini-margin": difficulty !== Difficulty.EASY };

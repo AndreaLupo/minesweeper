@@ -9,10 +9,6 @@
       <div class="value">{{ difficultyStats.lostGames }}</div>
     </div>
     <div class="item">
-      <div class="title">Started</div>
-      <div class="value">-1</div>
-    </div>
-    <div class="item">
       <div class="title">Best time</div>
       <div class="value">{{ bestTimeText }}</div>
     </div>
@@ -21,7 +17,7 @@
 
 <script setup lang="ts">
 import { useStatisticsStore, type DifficultyStats } from "@/stores/statistics";
-import { computed, watch, type PropType } from "vue";
+import { computed, watch, type ComputedRef, type PropType } from "vue";
 import dayjs from "dayjs";
 import type { Difficulty } from "@/model/grid/GameGrid";
 const statisticsStore = useStatisticsStore();
@@ -33,36 +29,33 @@ const props = defineProps({
   },
 });
 
-let difficultyStats: DifficultyStats;
-
 const getStatistics = (difficulty: Difficulty) => {
-  difficultyStats = statisticsStore.getStatisticsByDifficulty(difficulty);
+  return statisticsStore.getStatisticsByDifficulty(difficulty);
 };
 
+const difficultyStats: ComputedRef<DifficultyStats> = computed(
+  (): DifficultyStats => {
+    return getStatistics(props.difficulty);
+  }
+);
 getStatistics(props.difficulty);
 
 const bestTimeText = computed(() => {
-  const bestTime = difficultyStats.bestTime;
+  const bestTime = difficultyStats.value.bestTime;
   return dayjs().minute(0).second(bestTime).format("mm:ss");
 });
-
-watch(
-  () => props.difficulty,
-  (newDifficulty: Difficulty) => {
-    getStatistics(newDifficulty);
-  }
-);
 </script>
 
 <style lang="scss">
 @import "@/assets/variables.scss";
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
+  align-content: flex-start;
   gap: 1rem;
 
   .item {
-    padding: 3rem;
+    padding: 2rem;
     border-radius: 15px;
     text-align: center;
     background-color: $color-primary;

@@ -1,51 +1,102 @@
 <template>
-  <div>
+  <div class="intro">
+    <span class="intro--text"
+      >Here you can find some statitics for each difficulty.</span
+    >
+  </div>
+  <div class="wrapper">
     <div class="difficulty-selector">
-      <div @click="selectedDifficulty = Difficulty.EASY">EASY</div>
-      <div @click="selectedDifficulty = Difficulty.MEDIUM">MEDIUM</div>
-      <div @click="selectedDifficulty = Difficulty.DIFFICULT">DIFFICULT</div>
+      <div
+        @click="select(options[0])"
+        :class="options[0].isSelected ? 'selected' : ''"
+      >
+        EASY
+      </div>
+      <div
+        @click="select(options[1])"
+        :class="options[1].isSelected ? 'selected' : ''"
+      >
+        MEDIUM
+      </div>
+      <div
+        @click="select(options[2])"
+        :class="options[2].isSelected ? 'selected' : ''"
+      >
+        DIFFICULT
+      </div>
     </div>
-    <StatisticsGrid :difficulty="selectedDifficulty"></StatisticsGrid>
+    <StatisticsGrid
+      :difficulty="selectedDifficulty.difficulty"
+    ></StatisticsGrid>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import StatisticsGrid from "@/components/statistics/StatisticsGrid.vue";
 import { Difficulty } from "@/model/grid/GameGrid";
+type DifficultyOption = { difficulty: Difficulty; isSelected: boolean };
 
-const selectedDifficulty = ref(Difficulty.EASY);
+const options: DifficultyOption[] = reactive([
+  {
+    difficulty: Difficulty.EASY,
+    isSelected: true,
+  },
+  {
+    difficulty: Difficulty.MEDIUM,
+    isSelected: false,
+  },
+  {
+    difficulty: Difficulty.DIFFICULT,
+    isSelected: false,
+  },
+]);
+
+const select = (difficultyOption: DifficultyOption) => {
+  for (const option of options) {
+    option.isSelected = false;
+  }
+
+  difficultyOption.isSelected = true;
+};
+
+const selectedDifficulty = computed(() => {
+  return options.find((el) => el.isSelected)!;
+});
 </script>
 
 <style lang="scss">
 @import "@/assets/variables.scss";
 
-.difficulty-selector {
-  display: flex;
-  gap: 1rem;
-
-  div {
-    padding: 1rem;
-    background-color: $color-primary;
-    cursor: pointer;
+.intro {
+  margin-bottom: 4rem;
+  &--text {
+    font-size: 1.4em;
+    color: $text-color-bright;
   }
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.wrapper {
+  display: flex;
   gap: 1rem;
 
-  .item {
-    padding: 3rem;
-    border-radius: 15px;
-    text-align: center;
-    background-color: $color-primary;
-    .title {
-      font-size: medium;
-    }
-    .value {
-      font-size: xx-large;
+  .difficulty-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-end;
+
+    div {
+      //background-color: $color-primary;
+      color: $color-primary-bright;
+      cursor: pointer;
+      text-align: center;
+      padding: 4px 1rem;
+
+      &.selected {
+        border-right: 4px solid $color-primary;
+        background-color: rgba($color-primary, 0.4);
+      }
     }
   }
 }
