@@ -49,7 +49,6 @@ const bestTimeText = computed(() => {
 watch(
   () => props.difficulty,
   (newDifficulty: Difficulty) => {
-    console.log("New value:", newDifficulty);
     getStatistics(newDifficulty);
   }
 );

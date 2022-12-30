@@ -18,7 +18,6 @@ export const useGameStore = defineStore("game", () => {
   const gameResult = ref(GameResult.NOT_END);
 
   const difficulty = ref(localStorage.getItem('currentGameDifficulty') as Difficulty);
-  console.log('Difficulty in store:', difficulty.value);
   const countBombs = ref(gameSettings[difficulty.value].numBombs);
 
 
@@ -64,7 +63,6 @@ export const useGameStore = defineStore("game", () => {
 
 
   function initGrid(newDifficulty: Difficulty): void {
-    console.log(`InitGrid for difficulty ${newDifficulty} with tutorial? ${isTutorial()}`);
     difficulty.value = newDifficulty;
     if (isTutorial()) {
       //gameGrid = reactive(new FixedGrid(difficulty));
@@ -83,7 +81,6 @@ export const useGameStore = defineStore("game", () => {
   }
 
   function openCell(cell: Cell) {
-    console.log('Is reactive cell?', isReactive(cell));
     if (CellStatus.FLAGGED === cell.status) {
       // don't have to open cell if the player is wrong!
       return;
@@ -112,7 +109,6 @@ export const useGameStore = defineStore("game", () => {
   }
 
   function openCellsAround(cell: Cell) {
-    console.log('Open cells around from store');
     const cells: Cell[] = reactive(gameGrid.getCellsAround(cell));
     for (const cell of cells) {
       if (!cell.hasFlag && cell.isBomb) {

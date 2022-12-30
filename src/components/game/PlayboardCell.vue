@@ -74,7 +74,6 @@ const props = defineProps({
 let cell = reactive(props.cell);
 
 const cellClass = computed(() => {
-  console.log("Updating cell class!");
   const isZero = !cell.hasBombsNearby;
   let classes: {
     "num-0": boolean;
