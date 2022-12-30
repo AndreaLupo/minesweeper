@@ -4,7 +4,7 @@ import { gameSettings } from '../model/GameSettings';
 import { useStatisticsStore } from './statistics';
 import { CellStatus } from '../model/Cell';
 import { Difficulty, GameGrid, GameResult } from '../model/grid/GameGrid';
-import { isReactive, reactive, ref } from "vue";
+import { isReactive, isRef, reactive, ref } from "vue";
 import { defineStore } from "pinia";
 import { FixedGrid } from "@/model/grid/FixedGrid";
 import type { Cell } from '@/model/Cell';
@@ -23,8 +23,8 @@ export const useGameStore = defineStore("game", () => {
 
 
   const gameGrid = isTutorial() ? reactive(new FixedGrid(Difficulty.EASY)) : reactive(new RandomGrid(difficulty.value));
-  const selectedCell = ref<Cell>(gameGrid.getCell(0, 0));
 
+  const selectedCell = ref<Cell>(gameGrid.getCell(0, 0));
   const { gameDuration, createTimer, resetTime, togglePauseTimer } = useTimer();
 
   function isTutorial() {
@@ -83,40 +83,49 @@ export const useGameStore = defineStore("game", () => {
   }
 
   function openCell(cell: Cell) {
-    const cel = reactive(gameGrid.getCell(cell.row, cell.column));
-    if (CellStatus.FLAGGED === cel.status) {
+    console.log('Is reactive cell?', isReactive(cell));
+    if (CellStatus.FLAGGED === cell.status) {
       // don't have to open cell if the player is wrong!
       return;
     }
 
-    if (cel.isBomb) {
-      cel.status = CellStatus.BOOM;
-      endGame(GameResult.LOOSE);
+    if (cell.isBomb) {
+      cell.status = CellStatus.BOOM;
+      setTimeout(() => {
+        endGame(GameResult.LOOSE);
+      }, 300);
     }
 
-    if (!cel.hasBombsNearby) {
+    if (
+      cell.status === CellStatus.OPEN &&
+      cell.numberShown === gameGrid.countFlagsAround(cell)
+    ) {
+      openCellsAround(cell);
+    }
+
+    if (!cell.hasBombsNearby) {
       // cell will be opened in automatic cell update
-      // emit("openEmptyAdjacent", cell);
       openCellsAround(cell);
     } else {
-      cel.status = CellStatus.OPEN;
+      cell.status = CellStatus.OPEN;
     }
   }
 
   function openCellsAround(cell: Cell) {
-    const cellsAround = reactive(gameGrid.getCellsAround(cell));
-
-
-    for (const cell of cellsAround) {
+    console.log('Open cells around from store');
+    const cells: Cell[] = reactive(gameGrid.getCellsAround(cell));
+    for (const cell of cells) {
       if (!cell.hasFlag && cell.isBomb) {
         gameResult.value = GameResult.LOOSE;
-      } else if (!cell.hasFlag) {
+      } else if (!cell.hasFlag && !cell.isOpen) {
         cell.status = CellStatus.OPEN;
+        if (!cell.hasBombsNearby) {
+          openCellsAround(cell);
+        }
       } else {
         // cell has flag - n
       }
     }
-    cell.status = CellStatus.OPEN;
   }
 
   function selectCell(direction: SelectDirection) {

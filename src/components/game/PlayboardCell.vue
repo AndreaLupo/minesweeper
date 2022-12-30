@@ -66,8 +66,6 @@ console.log("Num row reactive? ", isReactive(gameStore.gameGrid.numRow)); */
 const { selectedCell } = storeToRefs(gameStore);
 const selected = reactive({ isSelected: false });
 
-const emit = defineEmits(["openEmptyAdjacent", "openCellsAround"]);
-
 const props = defineProps({
   cell: { type: Cell, required: true },
 });
@@ -121,33 +119,7 @@ watch(selectedCell, (newSelectedCell: Cell) => {
 });
 
 const openCell = () => {
-  if (CellStatus.FLAGGED === cell.status) {
-    // don't have to open cell if the player is wrong!
-    return;
-  }
-
-  if (cell.isBomb) {
-    cell.status = CellStatus.BOOM;
-    setTimeout(() => {
-      gameStore.endGame(GameResult.LOOSE);
-    }, 300);
-  }
-
-  if (
-    cell.status === CellStatus.OPEN &&
-    cell.numberShown === gameStore.gameGrid.countFlagsAround(cell)
-  ) {
-    openCellsAround();
-  }
-
-  if (!cell.hasBombsNearby) {
-    // cell will be opened in automatic cell update
-    // emit("openEmptyAdjacent", cell);
-    openCellsAround();
-    // gameStore.openCellsAround(cell);
-  } else {
-    cell.status = CellStatus.OPEN;
-  }
+  gameStore.openCell(cell);
 };
 
 const goToNextCellStatus = (event: Event) => {
@@ -166,12 +138,6 @@ const goToNextCellStatus = (event: Event) => {
       break;
     default:
   }
-};
-
-const openCellsAround = () => {
-  emit("openCellsAround", cell);
-  // gameStore.openCellsAround(cell);
-  cell.status = CellStatus.OPEN;
 };
 </script>
 

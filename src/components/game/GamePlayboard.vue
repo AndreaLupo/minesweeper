@@ -19,8 +19,6 @@
       v-for="cell in cellList"
       :key="cell.key"
       :cell="cell"
-      @open-empty-adjacent="openEmptyAdjacent"
-      @open-cells-around="openCellsAround"
     ></PlayboardCell>
   </div>
   <input
@@ -32,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { Cell, CellStatus } from "@/model/Cell";
+import type { Cell } from "@/model/Cell";
 import { GameResultInfo } from "@/model/GameResultInfo";
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
 import type { InputFocusable } from "@/model/InputFocusable";
@@ -124,22 +122,6 @@ const openEmptyAdjacent = (cell: Cell): void => {
   for (const cellAround of cellsAround) {
     cellAround.status = CellStatus.OPEN;
   } */
-};
-
-const openCellsAround = (cell: Cell): void => {
-  const cells: Cell[] = reactive(gameGrid.value.getCellsAround(cell));
-  for (const cell of cells) {
-    if (!cell.hasFlag && cell.isBomb) {
-      gameResult.value = GameResult.LOOSE;
-    } else if (!cell.hasFlag && !cell.isOpen) {
-      cell.status = CellStatus.OPEN;
-      if (!cell.hasBombsNearby) {
-        openCellsAround(cell);
-      }
-    } else {
-      // cell has flag - n
-    }
-  }
 };
 
 const manageKeyboardInput = (event: KeyboardEvent) => {
