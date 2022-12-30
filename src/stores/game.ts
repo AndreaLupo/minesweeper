@@ -8,16 +8,13 @@ import { isReactive, reactive, ref } from "vue";
 import { defineStore } from "pinia";
 import { FixedGrid } from "@/model/grid/FixedGrid";
 import type { Cell } from '@/model/Cell';
+import useTimer from '@/composable/timer';
 
 
 export const useGameStore = defineStore("game", () => {
   console.log('Init gameStore.');
   const statisticsStore = useStatisticsStore();
 
-  const gameDuration = reactive({
-    seconds: 0,
-    paused: false
-  });
   const gameResult = ref(GameResult.NOT_END);
 
   const difficulty = ref(localStorage.getItem('currentGameDifficulty') as Difficulty);
@@ -25,18 +22,10 @@ export const useGameStore = defineStore("game", () => {
   const countBombs = ref(gameSettings[difficulty.value].numBombs);
 
 
-  let gameGrid = isTutorial() ? reactive(new FixedGrid(Difficulty.EASY)) : reactive(new RandomGrid(difficulty.value));
+  const gameGrid = isTutorial() ? reactive(new FixedGrid(Difficulty.EASY)) : reactive(new RandomGrid(difficulty.value));
   const selectedCell = ref<Cell>(gameGrid.getCell(0, 0));
 
-  const createTimer = (): number => {
-    return setInterval(() => {
-      if (!gameDuration.paused) {
-        gameDuration.seconds++;
-      }
-    }, 1000);
-  }
-
-  let timer = createTimer();
+  const { gameDuration, createTimer, resetTime, togglePauseTimer } = useTimer();
 
   function isTutorial() {
     const tutorialActive = localStorage.getItem('tutorial');
@@ -72,26 +61,20 @@ export const useGameStore = defineStore("game", () => {
   }
 
 
-  function togglePauseTimer(): boolean {
-    gameDuration.paused = !gameDuration.paused;
-    return gameDuration.paused;
-  }
-
-  function resetTime(): void {
-    gameDuration.seconds = 0;
-    clearInterval(timer);
-    timer = createTimer();
-  }
 
 
-  function initGrid(difficulty: Difficulty): void {
-    console.log(`InitGrid for difficulty ${difficulty} with tutorial? ${isTutorial()}`);
+  function initGrid(newDifficulty: Difficulty): void {
+    console.log(`InitGrid for difficulty ${newDifficulty} with tutorial? ${isTutorial()}`);
+    difficulty.value = newDifficulty;
     if (isTutorial()) {
-      gameGrid = reactive(new FixedGrid(difficulty));
+      //gameGrid = reactive(new FixedGrid(difficulty));
+      Object.assign(gameGrid, reactive(new FixedGrid(newDifficulty)));
     } else {
-      gameGrid = reactive(new RandomGrid(difficulty));
+      Object.assign(gameGrid, reactive(new RandomGrid(newDifficulty)));
+      //gameGrid = reactive(new RandomGrid(difficulty));
     }
     // gameGrid.printDebugGrid('numbers');
+    restoreBombs();
     console.log(`Rows: ${gameGrid.numRow}, Cols: ${gameGrid.numCol}`);
   }
 
@@ -202,7 +185,6 @@ export const useGameStore = defineStore("game", () => {
   console.log('Game store init completed');
   return {
     countBombs,
-    gameDuration,
     gameGrid,
     gameResult,
     difficulty,
@@ -220,9 +202,8 @@ export const useGameStore = defineStore("game", () => {
     openCellsAround,
     endGame,
     numCellFlaggedAround,
-    togglePauseTimer,
-    resetTime,
-    restart
+    restart,
+    gameDuration, createTimer, resetTime, togglePauseTimer
   };
 
 });
