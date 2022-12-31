@@ -79,23 +79,31 @@ const cellClass = computed(() => {
     "num-0": boolean;
     num: boolean;
     "cell-mini"?: boolean;
+    "cell-maxi"?: boolean;
     selected?: boolean;
   } = {
     "num-0": isZero,
     num: !isZero,
   };
   classes["cell-mini"] = cellMiniCssClass()["cell-mini"];
+  classes["cell-maxi"] = cellMaxiCssClass()["cell-maxi"];
   classes["selected"] = isSelected()["selected"];
   return classes;
 });
 const closedCssClass = computed(() => {
-  return { ...cellMiniCssClass(), ...isSelected() };
+  return { ...cellMiniCssClass(), ...cellMaxiCssClass(), ...isSelected() };
 });
 function cellMiniCssClass() {
   return {
     "cell-mini": gameStore.gameGrid.difficulty !== Difficulty.EASY,
   };
 }
+function cellMaxiCssClass() {
+  return {
+    "cell-maxi": gameStore.gameGrid.difficulty === Difficulty.TUTORIAL,
+  };
+}
+
 function isSelected() {
   return {
     selected: selected.isSelected,
@@ -118,7 +126,9 @@ watch(selectedCell, (newSelectedCell: Cell) => {
 });
 
 const openCell = () => {
-  gameStore.openCell(cell);
+  if (cell.clickable) {
+    gameStore.openCell(cell);
+  }
 };
 
 const goToNextCellStatus = (event: Event) => {
@@ -155,6 +165,10 @@ const goToNextCellStatus = (event: Event) => {
 
   &.cell-mini {
     padding: 1rem;
+  }
+
+  &.cell-maxi {
+    padding: 2rem 1.4rem;
   }
 
   &-closed {

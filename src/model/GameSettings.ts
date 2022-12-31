@@ -1,4 +1,9 @@
 export const gameSettings = {
+  TUTORIAL: {
+    rows: 5,
+    cols: 5,
+    numBombs: 4
+  },
   EASY: {
     rows: 9,
     cols: 9,

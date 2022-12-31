@@ -4,7 +4,7 @@ import { gameSettings } from '../model/GameSettings';
 import { useStatisticsStore } from './statistics';
 import { CellStatus } from '../model/Cell';
 import { Difficulty, GameGrid, GameResult } from '../model/grid/GameGrid';
-import { isReactive, isRef, reactive, ref } from "vue";
+import { isReactive, isRef, toRefs, reactive, ref } from "vue";
 import { defineStore } from "pinia";
 import { FixedGrid } from "@/model/grid/FixedGrid";
 import type { Cell } from '@/model/Cell';
@@ -21,10 +21,18 @@ export const useGameStore = defineStore("game", () => {
   const countBombs = ref(gameSettings[difficulty.value].numBombs);
 
 
-  const gameGrid = isTutorial() ? reactive(new FixedGrid(Difficulty.EASY)) : reactive(new RandomGrid(difficulty.value));
+  const gameGrid = isTutorial() ? reactive(new FixedGrid(Difficulty.TUTORIAL)) : reactive(new RandomGrid(difficulty.value));
 
-  const selectedCell = ref<Cell>(gameGrid.getCell(0, 0));
+  const firstCell = ref<Cell>(gameGrid.getCell(0, 0));
+  const selectedCell = firstCell;
   const { gameDuration, createTimer, resetTime, togglePauseTimer } = useTimer();
+  if (isTutorial()) {
+    for (const cells of gameGrid.cellList) {
+      for (const cell of cells) {
+        cell.clickable = false;
+      }
+    }
+  }
 
   function isTutorial() {
     const tutorialActive = localStorage.getItem('tutorial');
@@ -65,11 +73,9 @@ export const useGameStore = defineStore("game", () => {
   function initGrid(newDifficulty: Difficulty): void {
     difficulty.value = newDifficulty;
     if (isTutorial()) {
-      //gameGrid = reactive(new FixedGrid(difficulty));
       Object.assign(gameGrid, reactive(new FixedGrid(newDifficulty)));
     } else {
       Object.assign(gameGrid, reactive(new RandomGrid(newDifficulty)));
-      //gameGrid = reactive(new RandomGrid(difficulty));
     }
     // gameGrid.printDebugGrid('numbers');
     restoreBombs();
@@ -152,6 +158,10 @@ export const useGameStore = defineStore("game", () => {
     selectedCell.value = gameGrid.getCell(newRow, newCol);
   }
 
+  function selectCellRequested(row: number, column: number) {
+    selectedCell.value = gameGrid.getCell(row, column);
+  }
+
   function isCellSelected(cell: Cell) {
     if (selectedCell.value == null) {
       return false;
@@ -197,6 +207,7 @@ export const useGameStore = defineStore("game", () => {
     setTutorial,
     setDifficulty,
     selectCell,
+    selectCellRequested,
     isCellSelected,
     incrementBombs,
     decrementBombs,

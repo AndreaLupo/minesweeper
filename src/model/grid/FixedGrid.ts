@@ -5,12 +5,17 @@ export class FixedGrid extends GameGrid {
 
   constructor(difficulty: Difficulty) {
     super(difficulty);
-    this.setBombs(this.numbBombs);
+    this.setBombs();
     this.initCells();
   }
 
-  setBombs = (numBombs: number): void => {
-    if (this.difficulty === Difficulty.EASY) {
+  setBombs = (): void => {
+    if (this.difficulty === Difficulty.TUTORIAL) {
+      this.setbombsInRow(0, [3]);
+      this.setbombsInRow(2, [2]);
+      this.setbombsInRow(3, [4]);
+      this.setbombsInRow(4, [4]);
+    } else if (this.difficulty === Difficulty.EASY) {
       this.cells[0][6].numberShown = BOMB;
       this.cells[0][7].numberShown = BOMB;
       this.cells[4][0].numberShown = BOMB;

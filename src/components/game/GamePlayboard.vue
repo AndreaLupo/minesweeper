@@ -52,6 +52,8 @@ const showModal = ref(false);
 
 const keyDetector = ref<InputFocusable>(null);
 
+console.log(gameGrid.value.numCol);
+
 const cssNumColumnFr = computed(function (): string {
   return `repeat(${gameGrid.value.numCol}, 1fr)`;
 });

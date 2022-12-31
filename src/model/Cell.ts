@@ -12,6 +12,7 @@ export enum CellStatus {
 export class Cell {
   status: CellStatus = CellStatus.CLOSED;
   numberShown: number = 0;
+  public clickable: boolean = true;
 
   constructor(public key: number, public row: number, public column: number) {
 

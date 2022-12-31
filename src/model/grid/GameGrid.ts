@@ -1,7 +1,10 @@
+import { toRefs } from 'vue';
 import { Cell, CellStatus } from "../Cell";
 import { gameSettings } from "../GameSettings";
 
+
 export enum Difficulty {
+  TUTORIAL = "TUTORIAL",
   EASY = "EASY",
   MEDIUM = "MEDIUM",
   DIFFICULT = "DIFFICULT"
@@ -74,6 +77,11 @@ export abstract class GameGrid implements GameStatusGrid {
     let row: Array<Cell>;
 
     switch (this.difficulty) {
+      case Difficulty.TUTORIAL:
+        this.maxRow = gameSettings.TUTORIAL.rows;
+        this.maxCol = gameSettings.TUTORIAL.cols;
+        this.numbBombs = gameSettings.TUTORIAL.numBombs;
+        break;
       case Difficulty.EASY:
         this.maxRow = gameSettings.EASY.rows;
         this.maxCol = gameSettings.EASY.cols;
@@ -100,6 +108,7 @@ export abstract class GameGrid implements GameStatusGrid {
       }
       this.cells[index] = row;
     }
+    console.log(`Num row: ${this.numRow}, num col: ${this.numCol}`)
   }
 
 
@@ -138,6 +147,18 @@ export abstract class GameGrid implements GameStatusGrid {
       for (let col = 0; col < rowCells.length; col++) {
         const numBombs = this.countBombsAround(row, col);
         this.cells[row][col].numberShown = numBombs;
+      }
+    }
+  }
+
+  /**
+   * @param clickable default: false 
+   */
+  setAllCellsClickable = (clickable: boolean = false): void => {
+    for (const cells of this.cellList) {
+      for (const cell of cells) {
+        const cel = toRefs(cell);
+        cel.clickable.value = clickable;
       }
     }
   }
