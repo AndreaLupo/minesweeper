@@ -127,7 +127,6 @@ const openEmptyAdjacent = (cell: Cell): void => {
 };
 
 const manageKeyboardInput = (event: KeyboardEvent) => {
-  console.log("Keydown from parent");
   switch (event.code) {
     case "ArrowUp":
       gameStore.selectCell("UP");
@@ -145,7 +144,7 @@ const manageKeyboardInput = (event: KeyboardEvent) => {
       gameStore.openCell(gameStore.selectedCell);
       break;
     case "KeyB":
-      // set bomb/question
+      gameStore.setNextCellStatus(gameStore.selectedCell);
       break;
   }
 };

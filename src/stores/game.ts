@@ -130,6 +130,23 @@ export const useGameStore = defineStore("game", () => {
     }
   }
 
+  function setNextCellStatus(cell: Cell) {
+    switch (cell.status) {
+      case CellStatus.CLOSED:
+        cell.status = CellStatus.FLAGGED;
+        decrementBombs();
+        break;
+      case CellStatus.FLAGGED:
+        cell.status = CellStatus.QUESTION_MARK;
+        incrementBombs();
+        break;
+      case CellStatus.QUESTION_MARK:
+        cell.status = CellStatus.CLOSED;
+        break;
+      default:
+    }
+  }
+
   function selectCell(direction: SelectDirection) {
     if (selectedCell.value == null) {
       selectedCell.value = gameGrid.getCell(0, 0);
@@ -216,6 +233,7 @@ export const useGameStore = defineStore("game", () => {
     initGrid,
     openCell,
     openCellsAround,
+    setNextCellStatus,
     endGame,
     numCellFlaggedAround,
     restart,

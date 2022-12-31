@@ -63,7 +63,7 @@ console.log(
 );
 console.log("Num row reactive? ", isReactive(gameStore.gameGrid.numRow)); */
 
-const { selectedCell } = storeToRefs(gameStore);
+const { selectedCell, gameResult } = storeToRefs(gameStore);
 const selected = reactive({ isSelected: false });
 
 const props = defineProps({
@@ -91,8 +91,33 @@ const cellClass = computed(() => {
   return classes;
 });
 const closedCssClass = computed(() => {
-  return { ...cellMiniCssClass(), ...cellMaxiCssClass(), ...isSelected() };
+  return {
+    ...cellMiniCssClass(),
+    ...cellMaxiCssClass(),
+    ...isSelected(),
+    ...hasWrongFlagClass(),
+  };
 });
+
+const numberShownClass = computed((): string => {
+  return `num num-${cell.numberShown}`;
+});
+
+const isWrongFlag = computed((): boolean => {
+  console.log("Ehy!");
+  return gameResult.value === GameResult.LOOSE && cell.hasFlag && !cell.isBomb;
+});
+
+watch(selectedCell, () => {
+  if (gameStore.isCellSelected(cell)) {
+    // add class selected
+    selected.isSelected = true;
+  } else {
+    // remove class selected
+    selected.isSelected = false;
+  }
+});
+
 function cellMiniCssClass() {
   return {
     "cell-mini": gameStore.gameGrid.difficulty !== Difficulty.EASY,
@@ -109,43 +134,22 @@ function isSelected() {
     selected: selected.isSelected,
   };
 }
-
-const numberShownClass = computed((): string => {
-  return `num num-${cell.numberShown}`;
-});
-
-watch(selectedCell, (newSelectedCell: Cell) => {
-  if (gameStore.isCellSelected(cell)) {
-    // add class selected
-    selected.isSelected = true;
-    console.log("This cell is selected!", cell.row, cell.column);
-  } else {
-    // remove class selected
-    selected.isSelected = false;
-  }
-});
+function hasWrongFlagClass() {
+  return {
+    "wrong-flag": isWrongFlag,
+  };
+}
 
 const openCell = () => {
-  if (cell.clickable) {
+  if (cell.clickable && gameResult.value === GameResult.NOT_END) {
     gameStore.openCell(cell);
   }
 };
 
 const goToNextCellStatus = (event: Event) => {
   event.preventDefault();
-  switch (cell.status) {
-    case CellStatus.CLOSED:
-      cell.status = CellStatus.FLAGGED;
-      gameStore.decrementBombs();
-      break;
-    case CellStatus.FLAGGED:
-      cell.status = CellStatus.QUESTION_MARK;
-      gameStore.incrementBombs();
-      break;
-    case CellStatus.QUESTION_MARK:
-      cell.status = CellStatus.CLOSED;
-      break;
-    default:
+  if (gameResult.value === GameResult.NOT_END) {
+    gameStore.setNextCellStatus(cell);
   }
 };
 </script>
@@ -188,6 +192,10 @@ const goToNextCellStatus = (event: Event) => {
     box-sizing: border-box;
     box-shadow: inset 0px 0px 0px 3px $color-accent;
     background-color: $color-primary-bright;
+  }
+
+  .wrong-flag {
+    background-color: $color-accent;
   }
 
   .fa-flag {

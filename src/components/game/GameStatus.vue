@@ -25,7 +25,7 @@ const { countBombs, gameDuration } = storeToRefs(gameStore);
   display: flex;
   gap: 1rem;
   background-color: $color-primary;
-  padding: 1rem;
+  padding: 0.8rem;
   border: 4px solid $color-brown;
   border-radius: 15px;
   font-size: 1.8em;
