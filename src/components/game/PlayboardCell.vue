@@ -151,7 +151,7 @@ const goToNextCellStatus = (event: Event) => {
   font-size: 1.4em;
   font-family: "Chakra Petch Bold";
   border-radius: 5px;
-  background-color: $color-brown;
+  background-color: $color-primary-bright;
 
   &.cell-mini {
     padding: 1rem;
