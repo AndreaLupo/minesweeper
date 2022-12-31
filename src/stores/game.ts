@@ -20,6 +20,7 @@ export const useGameStore = defineStore("game", () => {
   const difficulty = ref(localStorage.getItem('currentGameDifficulty') as Difficulty);
   const countBombs = ref(gameSettings[difficulty.value].numBombs);
 
+  const firstClick = ref(true);
 
   const gameGrid = isTutorial() ? reactive(new FixedGrid(Difficulty.TUTORIAL)) : reactive(new RandomGrid(difficulty.value));
 
@@ -87,6 +88,14 @@ export const useGameStore = defineStore("game", () => {
   }
 
   function openCell(cell: Cell) {
+    if (firstClick.value) {
+      firstClick.value = false;
+      if (!isTutorial() && (cell.hasBombsNearby || cell.isBomb)) {
+        // change grid so that there's no bomb here and nearby - always random grid if tutorial isn't active
+        (gameGrid as RandomGrid).moveBombsInEmptyCells(cell);
+      }
+    }
+
     if (CellStatus.FLAGGED === cell.status) {
       // don't have to open cell if the player is wrong!
       return;
