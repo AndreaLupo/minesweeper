@@ -19,12 +19,12 @@ const start = (level: Difficulty) => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/variables.scss";
+@import "@/assets/themes.scss";
 @import "@/assets/mixins.scss";
 .text {
   text-align: center;
   font-size: 2em;
-  color: $text-color-bright;
+  color: var(--text-color-bright);
 }
 .difficulties {
   display: flex;
@@ -36,8 +36,8 @@ const start = (level: Difficulty) => {
   .diff {
     padding: 1rem;
     text-align: center;
-    background-color: $color-primary;
-    color: $text-color;
+    background-color: var(--color-primary);
+    color: var(--text-color);
     border-radius: 10px;
     font-size: 1.2em;
   }

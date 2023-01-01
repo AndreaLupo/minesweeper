@@ -66,13 +66,13 @@ const selectedDifficulty = computed(() => {
 </script>
 
 <style lang="scss">
-@import "@/assets/variables.scss";
+@import "@/assets/themes.scss";
 
 .intro {
   margin-bottom: 4rem;
   &--text {
     font-size: 1.4em;
-    color: $text-color-bright;
+    color: var(--text-color-bright);
   }
 }
 
@@ -88,14 +88,14 @@ const selectedDifficulty = computed(() => {
 
     div {
       //background-color: $color-primary;
-      color: $color-primary-bright;
+      color: var(--color-primary-bright);
       cursor: pointer;
       text-align: center;
       padding: 4px 1rem;
 
       &.selected {
-        border-right: 4px solid $color-primary;
-        background-color: rgba($color-primary, 0.4);
+        border-right: 4px solid var(--color-primary);
+        background-color: rgba(var(--color-primary), 0.4);
       }
     }
   }

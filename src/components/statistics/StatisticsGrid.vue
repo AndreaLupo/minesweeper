@@ -47,7 +47,7 @@ const bestTimeText = computed(() => {
 </script>
 
 <style lang="scss">
-@import "@/assets/variables.scss";
+@import "@/assets/themes.scss";
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -58,7 +58,7 @@ const bestTimeText = computed(() => {
     padding: 2rem;
     border-radius: 15px;
     text-align: center;
-    background-color: $color-primary;
+    background-color: var(--color-primary);
     .title {
       font-size: medium;
     }

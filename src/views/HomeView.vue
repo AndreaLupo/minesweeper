@@ -12,6 +12,7 @@
 
 <style lang="scss" scoped>
 @import "@/assets/variables.scss";
+@import "@/assets/themes.scss";
 @import "@/assets/mixins.scss";
 
 .wrapper {
@@ -22,7 +23,7 @@
 
   h1 {
     font-family: $font;
-    color: $text-color-bright;
+    color: var(--text-color-bright);
     font-size: 3em;
     margin-bottom: 1rem;
   }

@@ -68,11 +68,11 @@ const classHeader = computed((): string => {
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/variables.scss";
+@import "@/assets/themes.scss";
 
 :export {
   red: red;
-  green: $color-secondary;
+  green: var(--color-secondary);
 }
 
 .backdrop {
@@ -106,7 +106,7 @@ header {
     background-color: #990000;
   }
   &.green {
-    background-color: $color-secondary;
+    background-color: var(--color-secondary);
   }
 
   color: white;

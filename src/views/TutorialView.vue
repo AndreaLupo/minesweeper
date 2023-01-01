@@ -64,12 +64,12 @@ const showNext = computed((): boolean => {
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/variables.scss";
+@import "@/assets/themes.scss";
 .tutorial {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   column-gap: 2rem;
-  color: $text-color-bright;
+  color: var(--text-color-bright);
 
   .help-column {
     display: flex;

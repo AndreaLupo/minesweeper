@@ -20,11 +20,11 @@ const { countBombs, gameDuration } = storeToRefs(gameStore);
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/variables.scss";
+@import "@/assets/themes.scss";
 .wrapper {
   display: flex;
   gap: 1rem;
-  background-color: $color-primary;
+  background-color: var(--color-primary);
   padding: 0.8rem;
   border: 4px solid $color-brown;
   border-radius: 15px;

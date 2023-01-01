@@ -168,7 +168,7 @@ console.log("GamePlayboard created");
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/variables.scss";
+@import "@/assets/themes.scss";
 .grid {
   display: grid;
   grid-template-columns: v-bind(cssNumColumnFr);
@@ -186,7 +186,7 @@ console.log("GamePlayboard created");
     width: 50%;
     padding: 1rem;
     border-radius: 5px;
-    background-color: $color-primary;
+    background-color: var(--color-primary);
     text-transform: uppercase;
     text-align: center;
     cursor: pointer;

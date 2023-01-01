@@ -155,17 +155,17 @@ const goToNextCellStatus = (event: Event) => {
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/variables.scss";
+@import "@/assets/themes.scss";
 
 .cell {
   display: flex;
   position: relative;
   padding: 1.4rem;
-  background-color: $text-color-bright;
+  background-color: var(--text-color-bright);
   font-size: 1.4em;
   font-family: "Chakra Petch Bold";
   border-radius: 5px;
-  background-color: $color-primary-bright;
+  background-color: var(--color-primary-bright);
 
   &.cell-mini {
     padding: 1rem;
@@ -176,7 +176,7 @@ const goToNextCellStatus = (event: Event) => {
   }
 
   &-closed {
-    background-color: $color-primary;
+    background-color: var(--color-primary);
   }
 
   span {
@@ -190,12 +190,12 @@ const goToNextCellStatus = (event: Event) => {
   &.selected {
     // transform: scale(1.2);
     box-sizing: border-box;
-    box-shadow: inset 0px 0px 0px 3px $color-accent;
-    background-color: $color-primary-bright;
+    box-shadow: inset 0px 0px 0px 3px var(--color-accent);
+    background-color: var(--color-primary-bright);
   }
 
   .wrong-flag {
-    background-color: $color-accent;
+    background-color: var(--color-accent);
   }
 
   .fa-flag {
