@@ -1,4 +1,5 @@
 <template>
+  <HomeLink></HomeLink>
   <div class="container">
     <div
       class="theme"
@@ -42,6 +43,7 @@ import { useThemesStore, type Theme } from "@/stores/themes";
 import { computed, onUnmounted } from "vue";
 import { storeToRefs } from "pinia";
 import PlayboardCell from "@/components/game/PlayboardCell.vue";
+import HomeLink from "@/components/ui/HomeLink.vue";
 const themeStore = useThemesStore();
 
 themeStore.openThemePage();
@@ -50,6 +52,7 @@ const { selectedTheme, fakeGrid } = storeToRefs(themeStore);
 const cellList = fakeGrid.value.cellArray;
 
 onUnmounted(() => {
+  console.log("Closed!");
   themeStore.closeThemePage();
 });
 

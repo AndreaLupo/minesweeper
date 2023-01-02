@@ -1,7 +1,8 @@
 <template>
+  <HomeLink></HomeLink>
   <div class="intro">
     <span class="intro--text"
-      >Here you can find some statitics for each difficulty.</span
+      >Here you can find some statistics for each difficulty.</span
     >
   </div>
   <div class="wrapper">
@@ -35,6 +36,7 @@
 import { computed, reactive, ref } from "vue";
 import StatisticsGrid from "@/components/statistics/StatisticsGrid.vue";
 import { Difficulty } from "@/model/grid/GameGrid";
+import HomeLink from "@/components/ui/HomeLink.vue";
 type DifficultyOption = { difficulty: Difficulty; isSelected: boolean };
 
 const options: DifficultyOption[] = reactive([
@@ -65,7 +67,7 @@ const selectedDifficulty = computed(() => {
 });
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "@/assets/themes.scss";
 
 .intro {

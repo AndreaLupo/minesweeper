@@ -1,4 +1,5 @@
 <template>
+  <HomeLink></HomeLink>
   <div class="tutorial">
     <div class="help-column">
       <span class="tutorial-text">{{ currentStep.text }}</span>
@@ -12,6 +13,7 @@
 </template>
 <script setup lang="ts">
 import GamePlayboard from "@/components/game/GamePlayboard.vue";
+import HomeLink from "@/components/ui/HomeLink.vue";
 import { Difficulty } from "@/model/grid/GameGrid";
 import { steps, type Step } from "@/model/TutorialSteps";
 import { useGameStore } from "@/stores/game";

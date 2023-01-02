@@ -1,4 +1,5 @@
 <template>
+  <HomeLink></HomeLink>
   <span class="text">Choose difficulty</span>
   <div class="difficulties">
     <a href="#" @click.prevent="start(Difficulty.EASY)">Easy</a>
@@ -8,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+import HomeLink from "@/components/ui/HomeLink.vue";
 import { Difficulty } from "@/model/grid/GameGrid";
 import router from "@/router";
 
