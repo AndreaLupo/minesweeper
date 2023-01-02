@@ -1,4 +1,5 @@
-import { BOMB, Difficulty } from './GameGrid';
+import { Difficulty } from '@/model/grid/GameGrid';
+import { BOMB } from './GameGrid';
 import { GameGrid } from "./GameGrid";
 
 export class FixedGrid extends GameGrid {
@@ -10,7 +11,7 @@ export class FixedGrid extends GameGrid {
   }
 
   setBombs = (): void => {
-    if (this.difficulty === Difficulty.TUTORIAL) {
+    if (this.difficulty === Difficulty.TUTORIAL || this.difficulty === Difficulty.SAMPLE) {
       this.setbombsInRow(0, [3]);
       this.setbombsInRow(2, [2]);
       this.setbombsInRow(3, [4]);

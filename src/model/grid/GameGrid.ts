@@ -5,6 +5,7 @@ import { gameSettings } from "../GameSettings";
 
 export enum Difficulty {
   TUTORIAL = "TUTORIAL",
+  SAMPLE = "SAMPLE",
   EASY = "EASY",
   MEDIUM = "MEDIUM",
   DIFFICULT = "DIFFICULT"
@@ -43,6 +44,17 @@ export abstract class GameGrid implements GameStatusGrid {
     return this.cells;
   }
 
+  get cellArray(): Cell[] {
+    const array: Cell[] = [];
+
+    for (const cells of this.cellList) {
+      for (const cell of cells) {
+        array.push(cell);
+      }
+    }
+    return array;
+  }
+
   get numRow(): number {
     return this.maxRow;
   }
@@ -78,6 +90,7 @@ export abstract class GameGrid implements GameStatusGrid {
 
     switch (this.difficulty) {
       case Difficulty.TUTORIAL:
+      case Difficulty.SAMPLE:
         this.maxRow = gameSettings.TUTORIAL.rows;
         this.maxCol = gameSettings.TUTORIAL.cols;
         this.numbBombs = gameSettings.TUTORIAL.numBombs;

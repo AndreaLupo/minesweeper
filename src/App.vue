@@ -1,5 +1,23 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from "vue-router";
+import { storeToRefs } from "pinia";
+import { watch } from "vue";
+import { RouterView } from "vue-router";
+import { useThemesStore, type Theme } from "./stores/themes";
+
+let htmlElement = document.documentElement;
+const themeStore = useThemesStore();
+const { selectedTheme } = storeToRefs(themeStore);
+
+updateTheme(selectedTheme.value);
+
+watch(selectedTheme, (theme: Theme) => {
+  updateTheme(theme);
+});
+
+function updateTheme(theme: Theme) {
+  themeStore.updateTheme(theme);
+  htmlElement.setAttribute("theme", theme);
+}
 </script>
 
 <template>
@@ -7,6 +25,10 @@ import { RouterLink, RouterView } from "vue-router";
 </template>
 
 <style scoped>
+body {
+  transition: all 0.3s ease-out;
+}
+
 header {
   line-height: 1.5;
   max-height: 100vh;

@@ -47,6 +47,7 @@ import { faBomb, faFlag, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { useGameStore } from "@/stores/game";
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
 import { storeToRefs } from "pinia";
+import { isThemePage } from "@/composable/theme";
 
 library.add(faBomb);
 library.add(faFlag);
@@ -104,7 +105,6 @@ const numberShownClass = computed((): string => {
 });
 
 const isWrongFlag = computed((): boolean => {
-  console.log("Ehy!");
   return gameResult.value === GameResult.LOOSE && cell.hasFlag && !cell.isBomb;
 });
 
@@ -120,12 +120,15 @@ watch(selectedCell, () => {
 
 function cellMiniCssClass() {
   return {
-    "cell-mini": gameStore.gameGrid.difficulty !== Difficulty.EASY,
+    "cell-mini":
+      gameStore.gameGrid.difficulty === Difficulty.MEDIUM ||
+      gameStore.gameGrid.difficulty === Difficulty.DIFFICULT,
   };
 }
 function cellMaxiCssClass() {
   return {
-    "cell-maxi": gameStore.gameGrid.difficulty === Difficulty.TUTORIAL,
+    "cell-maxi":
+      gameStore.gameGrid.difficulty === Difficulty.TUTORIAL && !isThemePage(),
   };
 }
 
@@ -197,6 +200,10 @@ const goToNextCellStatus = (event: Event) => {
   .wrong-flag {
     background-color: var(--color-accent);
   }
+  .fa-bomb {
+    color: black;
+    font-size: 1.3rem;
+  }
 
   .fa-flag {
     color: red;
@@ -204,7 +211,7 @@ const goToNextCellStatus = (event: Event) => {
   }
 
   .fa-question {
-    color: yellow;
+    color: darkslateblue;
     font-size: 1.3rem;
   }
 
