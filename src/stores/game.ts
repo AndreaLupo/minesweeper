@@ -195,7 +195,12 @@ export const useGameStore = defineStore("game", () => {
     return selectedCell.value.column === cell.column && selectedCell.value.row === cell.row;
   }
 
-  function endGame(result: GameResult) {
+  /**
+   * Process the result, stops the timer and update the statistics.
+   * @param result 
+   * @returns true if there was a best time update.
+   */
+  function endGame(result: GameResult): boolean {
     console.log('End game with store!');
     gameResult.value = result;
     togglePauseTimer();
@@ -203,8 +208,9 @@ export const useGameStore = defineStore("game", () => {
       statisticsStore.incrementLostGames();
     } else {
       statisticsStore.incrementWinGames();
-      statisticsStore.checkAndUpdateBestTime(gameDuration.seconds);
+      return statisticsStore.checkAndUpdateBestTime(gameDuration.seconds);
     }
+    return false;
   }
 
   /**

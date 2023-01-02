@@ -26,7 +26,8 @@ const additional = computed(() => {
 .timer-wrapper {
   display: flex;
   justify-content: center;
-  margin-bottom: 3rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
 
   &.mini-margin {
     margin-bottom: 1rem;

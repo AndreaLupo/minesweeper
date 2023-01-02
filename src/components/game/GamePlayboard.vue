@@ -2,7 +2,6 @@
   <div class="grid" @keydown="manageKeyboardInput">
     <MineModal
       :show="showModal"
-      :title="gameEndData.title"
       @close="showModal = false"
       :win="gameEndData.win"
       :fixed="true"
@@ -35,16 +34,11 @@ import { Difficulty, GameResult } from "@/model/grid/GameGrid";
 import type { InputFocusable } from "@/model/InputFocusable";
 import { useGameStore } from "@/stores/game";
 import { storeToRefs } from "pinia";
-import { computed, onMounted, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch, type Ref } from "vue";
 import MineModal from "../ui/MineModal.vue";
 import PlayboardCell from "./PlayboardCell.vue";
 
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faFaceFrown, faFaceSmile } from "@fortawesome/free-solid-svg-icons";
 import EndgameModalContent from "./EndgameModalContent.vue";
-
-library.add(faFaceFrown);
-library.add(faFaceSmile);
 
 const gameStore = useGameStore();
 const difficulty: Difficulty = localStorage.getItem(
@@ -52,7 +46,8 @@ const difficulty: Difficulty = localStorage.getItem(
 ) as Difficulty;
 gameStore.initGrid(difficulty);
 const { countBombs, gameGrid, gameResult } = storeToRefs(gameStore);
-const showModal = ref(false);
+const showModal: Ref<boolean> = ref(false);
+const newRecord: Ref<boolean | null> = ref(null);
 
 // useful when end a match and start a new one passing from menu
 gameStore.restart();
@@ -72,9 +67,15 @@ const cellList = computed(function (): Array<Cell> {
 const gameEndData = computed(function (): GameResultInfo {
   let result: GameResultInfo;
   if (gameResult.value === GameResult.LOOSE) {
-    result = new GameResultInfo("You lost", "Try again.", false);
+    result = new GameResultInfo("Oh, no!", false, false);
   } else {
-    result = new GameResultInfo("Win!", "Congrats! Well done!", true);
+    let message = "";
+    if (newRecord.value) {
+      message = "Best time!";
+    } else {
+      message = "You rock!";
+    }
+    result = new GameResultInfo(message, true, newRecord.value!);
   }
   return result;
 });
@@ -118,7 +119,7 @@ const isGameEnding = (): void => {
       result = GameResult.LOOSE;
     }
     showModal.value = true;
-    gameStore.endGame(result);
+    newRecord.value = gameStore.endGame(result);
   }
 };
 

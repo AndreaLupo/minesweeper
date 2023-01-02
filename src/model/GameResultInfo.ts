@@ -1,5 +1,5 @@
 export class GameResultInfo {
-  constructor(public title: string, public description: string, public win: boolean) {
+  constructor(public description: string, public win: boolean, public newRecord: boolean) {
 
   }
 }

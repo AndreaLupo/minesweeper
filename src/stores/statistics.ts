@@ -52,7 +52,7 @@ export const useStatisticsStore = defineStore("statistics", () => {
   /**
    * Check if the time passed as parameter is lower than the current best time. If so, update the value.
    * @param time new possible value of time
-   * @returns 
+   * @returns if the best time has been updated
    */
   function checkAndUpdateBestTime(time: number): boolean {
     if (difficultyStats.bestTime > time) {
