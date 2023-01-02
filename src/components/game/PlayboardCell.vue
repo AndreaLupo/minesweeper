@@ -105,7 +105,7 @@ const numberShownClass = computed((): string => {
 });
 
 const isWrongFlag = computed((): boolean => {
-  return gameResult.value === GameResult.LOOSE && cell.hasFlag && !cell.isBomb;
+  return gameResult.value === GameResult.LOST && cell.hasFlag && !cell.isBomb;
 });
 
 watch(selectedCell, () => {

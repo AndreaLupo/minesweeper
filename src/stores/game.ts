@@ -104,7 +104,7 @@ export const useGameStore = defineStore("game", () => {
     if (cell.isBomb) {
       cell.status = CellStatus.BOOM;
       setTimeout(() => {
-        endGame(GameResult.LOOSE);
+        endGame(GameResult.LOST);
       }, 300);
     }
 
@@ -127,7 +127,7 @@ export const useGameStore = defineStore("game", () => {
     const cells: Cell[] = reactive(gameGrid.getCellsAround(cell));
     for (const cell of cells) {
       if (!cell.hasFlag && cell.isBomb) {
-        gameResult.value = GameResult.LOOSE;
+        gameResult.value = GameResult.LOST;
       } else if (!cell.hasFlag && !cell.isOpen) {
         cell.status = CellStatus.OPEN;
         if (!cell.hasBombsNearby) {
@@ -204,12 +204,7 @@ export const useGameStore = defineStore("game", () => {
     console.log('End game with store!');
     gameResult.value = result;
     togglePauseTimer();
-    if (result === GameResult.LOOSE) {
-      statisticsStore.incrementLostGames();
-    } else {
-      statisticsStore.incrementWinGames();
-      return statisticsStore.checkAndUpdateBestTime(gameDuration.seconds);
-    }
+    statisticsStore.updateStatistics(result, gameDuration.seconds);
     return false;
   }
 

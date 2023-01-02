@@ -66,7 +66,7 @@ const cellList = computed(function (): Array<Cell> {
 
 const gameEndData = computed(function (): GameResultInfo {
   let result: GameResultInfo;
-  if (gameResult.value === GameResult.LOOSE) {
+  if (gameResult.value === GameResult.LOST) {
     result = new GameResultInfo("Oh, no!", false, false);
   } else {
     let message = "";
@@ -88,7 +88,7 @@ const gameComplete = computed(() => {
 });
 
 watch(gameResult, (result: GameResult) => {
-  if (result === GameResult.LOOSE) {
+  if (result === GameResult.LOST) {
     showModal.value = true;
     gameGrid.value.openNotFlaggedCells();
   }
@@ -116,7 +116,7 @@ const isGameEnding = (): void => {
     if (gameGrid.value.allUserFlagsOnBombs()) {
       result = GameResult.WIN;
     } else {
-      result = GameResult.LOOSE;
+      result = GameResult.LOST;
     }
     showModal.value = true;
     newRecord.value = gameStore.endGame(result);

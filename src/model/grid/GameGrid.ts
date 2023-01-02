@@ -12,9 +12,9 @@ export enum Difficulty {
 }
 
 export enum GameResult {
-  NOT_END,
-  WIN,
-  LOOSE
+  NOT_END = "NOT_END",
+  WIN = "WIN",
+  LOST = "LOST"
 }
 
 export const BOMB: number = -1;
@@ -311,7 +311,7 @@ export abstract class GameGrid implements GameStatusGrid {
       return GameResult.WIN;
     }
 
-    return GameResult.LOOSE;
+    return GameResult.LOST;
   }
 
   allUserFlagsOnBombs() {

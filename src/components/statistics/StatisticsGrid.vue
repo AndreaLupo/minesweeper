@@ -5,19 +5,31 @@
       <div class="value">{{ difficultyStats.winGames }}</div>
     </div>
     <div class="item">
-      <div class="title">Lost</div>
-      <div class="value">{{ difficultyStats.lostGames }}</div>
+      <div class="title">Total</div>
+      <div class="value">{{ totalGames }}</div>
+    </div>
+    <div class="item">
+      <div class="title">Percentage</div>
+      <div class="value">{{ percentageWinGames }}%</div>
     </div>
     <div class="item">
       <div class="title">Best time</div>
       <div class="value">{{ bestTimeText }}</div>
+    </div>
+    <div class="item">
+      <div class="title">Best time date</div>
+      <div class="value">{{ bestTimeDateText }}</div>
+    </div>
+    <div class="item">
+      <div class="title">Total time</div>
+      <div class="value">{{ totalTimeText }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useStatisticsStore, type DifficultyStats } from "@/stores/statistics";
-import { computed, watch, type ComputedRef, type PropType } from "vue";
+import { computed, type ComputedRef, type PropType } from "vue";
 import dayjs from "dayjs";
 import type { Difficulty } from "@/model/grid/GameGrid";
 const statisticsStore = useStatisticsStore();
@@ -42,7 +54,27 @@ getStatistics(props.difficulty);
 
 const bestTimeText = computed(() => {
   const bestTime = difficultyStats.value.bestTime;
-  return dayjs().minute(0).second(bestTime).format("mm:ss");
+  return dayjs().minute(0).second(bestTime.time).format("mm:ss");
+});
+
+const bestTimeDateText = computed(() => {
+  const bestTime = difficultyStats.value.bestTime;
+  return dayjs(bestTime.when).format("DD/MM/YY HH:mm");
+});
+const totalTimeText = computed(() => {
+  const totalTime = difficultyStats.value.totalTime;
+  return dayjs().minute(0).second(totalTime).format("mm:ss");
+});
+
+const totalGames = computed(() => {
+  return difficultyStats.value.winGames + difficultyStats.value.lostGames;
+});
+const percentageWinGames = computed(() => {
+  return (
+    (Math.round((difficultyStats.value.winGames / totalGames.value) * 100) /
+      100) *
+    100
+  );
 });
 </script>
 
