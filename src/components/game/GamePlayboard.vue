@@ -6,14 +6,13 @@
       @close="showModal = false"
       :win="gameEndData.win"
       :fixed="true"
+      :hide-header="true"
     >
-      <p>{{ gameEndData.description }}</p>
-      <div class="buttons">
-        <div class="btn" @click="newGame">New game</div>
-        <div class="btn" @click="restartGame">Restart this game</div>
-        <div class="btn" @click="goToHome">Go to menu</div>
-        <div class="btn" @click="showModal = false">Back to game</div>
-      </div>
+      <EndgameModalContent
+        :game-end-data="gameEndData"
+        :show-modal="showModal"
+        @close-modal="showModal = false"
+      ></EndgameModalContent>
     </MineModal>
     <PlayboardCell
       v-for="cell in cellList"
@@ -34,12 +33,18 @@ import type { Cell } from "@/model/Cell";
 import { GameResultInfo } from "@/model/GameResultInfo";
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
 import type { InputFocusable } from "@/model/InputFocusable";
-import router from "@/router";
 import { useGameStore } from "@/stores/game";
 import { storeToRefs } from "pinia";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import MineModal from "../ui/MineModal.vue";
 import PlayboardCell from "./PlayboardCell.vue";
+
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faFaceFrown, faFaceSmile } from "@fortawesome/free-solid-svg-icons";
+import EndgameModalContent from "./EndgameModalContent.vue";
+
+library.add(faFaceFrown);
+library.add(faFaceSmile);
 
 const gameStore = useGameStore();
 const difficulty: Difficulty = localStorage.getItem(
@@ -48,10 +53,12 @@ const difficulty: Difficulty = localStorage.getItem(
 gameStore.initGrid(difficulty);
 const { countBombs, gameGrid, gameResult } = storeToRefs(gameStore);
 const showModal = ref(false);
+
+// useful when end a match and start a new one passing from menu
+gameStore.restart();
+
 // null for initial value, focus for input
-
 const keyDetector = ref<InputFocusable>(null);
-
 console.log(gameGrid.value.numCol);
 
 const cssNumColumnFr = computed(function (): string {
@@ -115,17 +122,6 @@ const isGameEnding = (): void => {
   }
 };
 
-const openEmptyAdjacent = (cell: Cell): void => {
-  // gameGrid.printDebugGrid();
-  gameGrid.value.automaticOpenAdjacentEmptyCell(cell);
-  /*
-  doesnt work
-  const cellsAround: Cell[] = gameGrid.value.getCellsAround(cell);
-  for (const cellAround of cellsAround) {
-    cellAround.status = CellStatus.OPEN;
-  } */
-};
-
 const manageKeyboardInput = (event: KeyboardEvent) => {
   switch (event.code) {
     case "ArrowUp":
@@ -149,21 +145,6 @@ const manageKeyboardInput = (event: KeyboardEvent) => {
   }
 };
 
-const newGame = () => {
-  location.reload();
-};
-const restartGame = () => {
-  gameGrid.value.closeAllCells();
-  gameResult.value = GameResult.NOT_END;
-  gameStore.restoreBombs();
-  gameStore.resetTime();
-  showModal.value = false;
-};
-const goToHome = () => {
-  router.push("/");
-  showModal.value = false;
-};
-
 console.log("GamePlayboard created");
 </script>
 
@@ -174,23 +155,6 @@ console.log("GamePlayboard created");
   grid-template-columns: v-bind(cssNumColumnFr);
   column-gap: 6px;
   row-gap: 6px;
-}
-
-.buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  .btn {
-    display: block;
-    width: 50%;
-    padding: 1rem;
-    border-radius: 5px;
-    background-color: var(--color-primary);
-    text-transform: uppercase;
-    text-align: center;
-    cursor: pointer;
-  }
 }
 
 .hidden-input {

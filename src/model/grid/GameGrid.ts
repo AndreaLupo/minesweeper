@@ -29,10 +29,10 @@ export interface GameStatusGrid {
 }
 
 export abstract class GameGrid implements GameStatusGrid {
-  protected cells: Cell[][] = [];
-  protected maxRow: number = 0;
-  protected maxCol: number = 0;
-  protected numbBombs: number = 0;
+  public cells: Cell[][] = [];
+  public maxRow: number = 0;
+  public maxCol: number = 0;
+  public numbBombs: number = 0;
 
   abstract setBombs: (numBombs: number) => void;
 

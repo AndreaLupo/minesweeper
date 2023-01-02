@@ -8,6 +8,8 @@
 
   --color-accent: #eb6a33;
 
+  --background-light: #f0d9d4;
+
   --text-color-bright: #f0d9d4;
   --text-color: var(--color-secondary);
 }
@@ -16,10 +18,12 @@
   --color-primary: #fdca40;
   --color-primary-bright: #fedf8c;
 
-  --color-secondary: #226f54;
+  --color-secondary: #444444;
   --color-secondary-dark: #2f2f2f;
 
-  --color-accent: #c73e1d;
+  --color-accent: #cd5134;
+
+  --background-light: var(--color-secondary);
 
   --text-color-bright: #88a0a8;
   --text-color: var(--color-secondary);

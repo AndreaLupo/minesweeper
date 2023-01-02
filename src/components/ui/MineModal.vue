@@ -3,7 +3,7 @@
     <div v-if="show" @click="tryClose" class="backdrop"></div>
     <transition name="dialog">
       <dialog open v-if="show">
-        <header :class="classHeader">
+        <header v-if="!hideHeader" :class="classHeader">
           <slot name="header">
             <h2>{{ title }}</h2>
           </slot>
@@ -41,6 +41,11 @@ const props = defineProps({
   win: {
     type: Boolean,
     required: false,
+  },
+  hideHeader: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
 });
 const emit = defineEmits(["close"]);
@@ -97,7 +102,7 @@ dialog {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  background-color: white;
+  background-color: var(--background-light);
 }
 
 header {

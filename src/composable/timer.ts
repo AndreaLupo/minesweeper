@@ -24,6 +24,7 @@ export default function useTimer() {
 
   function resetTime(): void {
     gameDuration.seconds = 0;
+    gameDuration.paused = false;
     clearInterval(timer);
     timer = createTimer();
   }

@@ -220,6 +220,10 @@ export const useGameStore = defineStore("game", () => {
   function restart(): void {
     countBombs.value = gameSettings[difficulty.value].numBombs;
     gameGrid.closeAllCells();
+    restoreBombs();
+    resetTime();
+    gameResult.value = GameResult.NOT_END;
+    firstClick.value = true;
   }
 
 
