@@ -81,7 +81,6 @@ export const useGameStore = defineStore("game", () => {
     }
     // gameGrid.printDebugGrid('numbers');
     restoreBombs();
-    console.log(`Rows: ${gameGrid.numRow}, Cols: ${gameGrid.numCol}`);
   }
 
   function automaticopenCellsAround(cell: Cell): void {
@@ -204,7 +203,7 @@ export const useGameStore = defineStore("game", () => {
    * @returns true if there was a best time update.
    */
   function endGame(result: GameResult): boolean {
-    console.log('End game with store!');
+    //console.log('End game with store!');
     gameResult.value = result;
     togglePauseTimer();
     return statisticsStore.updateStatistics(difficulty.value, result, gameDuration.seconds);

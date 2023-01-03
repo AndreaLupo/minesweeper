@@ -60,13 +60,11 @@ const allStats = storeToRefs(statisticsStore);
 
 const getStatistics = (difficulty: Difficulty) => {
   const difficultyStats = allStats.difficultyStats.value[difficulty];
-  console.log("Is difficulty stats reactive?", isReactive(difficultyStats));
   return difficultyStats;
 };
 
 const difficultyStats: ComputedRef<DifficultyStats> = computed(
   (): DifficultyStats => {
-    console.log("Updated", props.difficulty);
     return getStatistics(props.difficulty);
   }
 );

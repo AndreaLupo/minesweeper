@@ -96,8 +96,6 @@ const goToHome = () => {
   router.push("/");
   closeModal();
 };
-
-console.log("Created!");
 </script>
 
 <style scoped lang="scss">

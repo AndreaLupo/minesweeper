@@ -55,7 +55,6 @@ gameStore.restart();
 
 // null for initial value, focus for input
 const keyDetector = ref<InputFocusable>(null);
-console.log(gameGrid.value.numCol);
 
 const cssNumColumnFr = computed(function (): string {
   return `repeat(${gameGrid.value.numCol}, 1fr)`;
@@ -124,6 +123,9 @@ const isGameEnding = (): void => {
 };
 
 const manageKeyboardInput = (event: KeyboardEvent) => {
+  if (gameResult.value !== GameResult.NOT_END) {
+    return;
+  }
   switch (event.code) {
     case "ArrowUp":
       gameStore.selectCell("UP");
@@ -149,8 +151,6 @@ const manageKeyboardInput = (event: KeyboardEvent) => {
 const openClosedCells = () => {
   gameGrid.value.openNotFlaggedCells();
 };
-
-console.log("GamePlayboard created");
 </script>
 
 <style scoped lang="scss">

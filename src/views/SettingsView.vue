@@ -52,7 +52,6 @@ const { selectedTheme, fakeGrid } = storeToRefs(themeStore);
 const cellList = fakeGrid.value.cellArray;
 
 onUnmounted(() => {
-  console.log("Closed!");
   themeStore.closeThemePage();
 });
 
