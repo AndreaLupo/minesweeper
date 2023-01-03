@@ -2,7 +2,11 @@
   <HomeLink></HomeLink>
   <div class="tutorial">
     <div class="help-column">
-      <span class="tutorial-text">{{ currentStep.text }}</span>
+      <transition name="text" mode="out-in">
+        <span class="tutorial-text" :key="currentStep.text">{{
+          currentStep.text
+        }}</span>
+      </transition>
       <span v-if="showNext" class="next" @click="goToNextStep">Next</span>
     </div>
     <div>
@@ -86,6 +90,23 @@ const showNext = computed((): boolean => {
   .next {
     cursor: pointer;
     align-self: flex-end;
+  }
+
+  .text-enter-active {
+    transition: all 0.3s ease-out;
+  }
+  .text-leave-active {
+    transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+  }
+
+  .text-enter-from {
+    transform: translateX(-40px);
+    opacity: 0;
+  }
+
+  .text-leave-to {
+    transform: translateX(40px);
+    opacity: 0;
   }
 }
 </style>
