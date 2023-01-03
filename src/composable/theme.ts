@@ -1,3 +1,5 @@
+import type { Theme } from "@/stores/themes";
+
 export function setTheme(theme: Theme): void {
   localStorage.setItem('theme', theme);
 }

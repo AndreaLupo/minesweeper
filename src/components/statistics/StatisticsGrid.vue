@@ -61,6 +61,7 @@ const getStatistics = (difficulty: Difficulty) => {
 
 const difficultyStats: ComputedRef<DifficultyStats> = computed(
   (): DifficultyStats => {
+    console.log("Updated", props.difficulty);
     return getStatistics(props.difficulty);
   }
 );

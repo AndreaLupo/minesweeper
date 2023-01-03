@@ -17,7 +17,8 @@ export const useGameStore = defineStore("game", () => {
 
   const gameResult = ref(GameResult.NOT_END);
 
-  const difficulty = ref(localStorage.getItem('currentGameDifficulty') as Difficulty);
+  const currentDifficulty = localStorage.getItem('currentGameDifficulty');
+  const difficulty = ref(currentDifficulty === null ? Difficulty.SAMPLE : currentDifficulty as Difficulty);
   const countBombs = ref(gameSettings[difficulty.value].numBombs);
 
   const firstClick = ref(true);
