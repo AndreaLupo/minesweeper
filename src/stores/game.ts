@@ -91,6 +91,8 @@ export const useGameStore = defineStore("game", () => {
   function openCell(cell: Cell) {
     if (firstClick.value) {
       firstClick.value = false;
+      togglePauseTimer();
+
       if (!isTutorial() && (cell.hasBombsNearby || cell.isBomb)) {
         // change grid so that there's no bomb here and nearby - always random grid if tutorial isn't active
         (gameGrid as RandomGrid).moveBombsInEmptyCells(cell);

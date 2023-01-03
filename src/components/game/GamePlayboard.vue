@@ -11,6 +11,7 @@
         :game-end-data="gameEndData"
         :show-modal="showModal"
         @close-modal="showModal = false"
+        @open-cells="openClosedCells"
       ></EndgameModalContent>
     </MineModal>
     <PlayboardCell
@@ -90,7 +91,6 @@ const gameComplete = computed(() => {
 watch(gameResult, (result: GameResult) => {
   if (result === GameResult.LOST) {
     showModal.value = true;
-    gameGrid.value.openNotFlaggedCells();
   }
 });
 
@@ -144,6 +144,10 @@ const manageKeyboardInput = (event: KeyboardEvent) => {
       gameStore.setNextCellStatus(gameStore.selectedCell);
       break;
   }
+};
+
+const openClosedCells = () => {
+  gameGrid.value.openNotFlaggedCells();
 };
 
 console.log("GamePlayboard created");

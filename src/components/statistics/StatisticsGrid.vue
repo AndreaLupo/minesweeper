@@ -96,11 +96,11 @@ const totalGames = computed(() => {
   return difficultyStats.value.winGames + difficultyStats.value.lostGames;
 });
 const percentageWinGames = computed(() => {
-  return (
+  const percentage =
     (Math.round((difficultyStats.value.winGames / totalGames.value) * 100) /
       100) *
-    100
-  );
+    100;
+  return percentage.toFixed(2);
 });
 </script>
 

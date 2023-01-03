@@ -39,7 +39,8 @@ import {
   faHourglassStart,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { computed, toRefs, type PropType } from "vue";
+import { computed, onMounted, toRefs, type PropType } from "vue";
+import { storeToRefs } from "pinia";
 
 const gameStore = useGameStore();
 library.add(faFaceFrown);
@@ -58,7 +59,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["closeModal"]);
+const emit = defineEmits(["closeModal", "openCells"]);
 
 const { gameEndData, showModal } = toRefs(props);
 
@@ -79,8 +80,8 @@ const newGame = () => {
 };
 
 const closeModal = () => {
-  console.log("ok!");
   emit("closeModal");
+  emit("openCells");
 };
 const changeDifficulty = () => {
   router.push("/start");
@@ -95,6 +96,8 @@ const goToHome = () => {
   router.push("/");
   closeModal();
 };
+
+console.log("Created!");
 </script>
 
 <style scoped lang="scss">
