@@ -43,9 +43,10 @@
 
 <script setup lang="ts">
 import { useStatisticsStore, type DifficultyStats } from "@/stores/statistics";
-import { computed, type ComputedRef, type PropType } from "vue";
+import { computed, isReactive, type ComputedRef, type PropType } from "vue";
 import dayjs from "dayjs";
 import type { Difficulty } from "@/model/grid/GameGrid";
+import { storeToRefs } from "pinia";
 const statisticsStore = useStatisticsStore();
 
 const props = defineProps({
@@ -55,8 +56,12 @@ const props = defineProps({
   },
 });
 
+const allStats = storeToRefs(statisticsStore);
+
 const getStatistics = (difficulty: Difficulty) => {
-  return statisticsStore.getStatisticsByDifficulty(difficulty);
+  const difficultyStats = allStats.difficultyStats.value[difficulty];
+  console.log("Is difficulty stats reactive?", isReactive(difficultyStats));
+  return difficultyStats;
 };
 
 const difficultyStats: ComputedRef<DifficultyStats> = computed(

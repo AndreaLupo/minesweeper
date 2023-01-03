@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from "vue";
+import { computed, reactive } from "vue";
 import StatisticsGrid from "@/components/statistics/StatisticsGrid.vue";
 import { Difficulty } from "@/model/grid/GameGrid";
 import HomeLink from "@/components/ui/HomeLink.vue";

@@ -3,8 +3,8 @@ import { RandomGrid } from '../model/grid/RandomGrid';
 import { gameSettings } from '../model/GameSettings';
 import { useStatisticsStore } from './statistics';
 import { CellStatus } from '../model/Cell';
-import { Difficulty, GameGrid, GameResult } from '../model/grid/GameGrid';
-import { isReactive, isRef, toRefs, reactive, ref } from "vue";
+import { Difficulty, GameResult } from '../model/grid/GameGrid';
+import { reactive, ref } from "vue";
 import { defineStore } from "pinia";
 import { FixedGrid } from "@/model/grid/FixedGrid";
 import type { Cell } from '@/model/Cell';
@@ -205,7 +205,7 @@ export const useGameStore = defineStore("game", () => {
     console.log('End game with store!');
     gameResult.value = result;
     togglePauseTimer();
-    statisticsStore.updateStatistics(result, gameDuration.seconds);
+    statisticsStore.updateStatistics(difficulty.value, result, gameDuration.seconds);
     return false;
   }
 

@@ -25,9 +25,6 @@ export interface DifficultyStats {
 
 export const useStatisticsStore = defineStore("statistics", () => {
 
-  const storageDiff = localStorage.getItem('currentGameDifficulty') as Difficulty;
-  const difficulty = storageDiff ? storageDiff : Difficulty.EASY;
-
   const getFromLocalStorage = function (difficulty: Difficulty, defaults?: DifficultyStats): DifficultyStats {
     const storage: string | null = localStorage.getItem(difficulty);
     let diffStats: DifficultyStats;
@@ -69,20 +66,26 @@ export const useStatisticsStore = defineStore("statistics", () => {
     },
     totalTime: 0
   }
+  type DifficultyStatsReference = Record<Difficulty, DifficultyStats>;
+  const difficultyStats: DifficultyStatsReference = reactive({
+    [Difficulty.EASY]: getFromLocalStorage(Difficulty.EASY, defaults),
+    [Difficulty.MEDIUM]: getFromLocalStorage(Difficulty.MEDIUM, defaults),
+    [Difficulty.DIFFICULT]: getFromLocalStorage(Difficulty.DIFFICULT, defaults),
+    [Difficulty.TUTORIAL]: getFromLocalStorage(Difficulty.TUTORIAL, defaults),
+    [Difficulty.SAMPLE]: getFromLocalStorage(Difficulty.SAMPLE, defaults),
+  });
 
-  const difficultyStats = getFromLocalStorage(difficulty, defaults);
-
-  function incrementLostGames() {
-    difficultyStats.lostGames++;
+  function incrementLostGames(difficulty: Difficulty) {
+    difficultyStats[difficulty].lostGames++;
     // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
-  function incrementWinGames() {
-    difficultyStats.winGames++;
+  function incrementWinGames(difficulty: Difficulty) {
+    difficultyStats[difficulty].winGames++;
     // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
 
-  function updateTotalTime(seconds: number) {
-    difficultyStats.totalTime = difficultyStats.totalTime + seconds;
+  function updateTotalTime(difficulty: Difficulty, seconds: number) {
+    difficultyStats[difficulty].totalTime = difficultyStats[difficulty].totalTime + seconds;
     // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
 
@@ -91,61 +94,65 @@ export const useStatisticsStore = defineStore("statistics", () => {
    * @param time new possible value of time
    * @returns if the best time has been updated
    */
-  function checkAndUpdateBestTime(time: number): boolean {
-    if (difficultyStats.bestTime.time > time) {
-      setBestTime(time);
+  function checkAndUpdateBestTime(difficulty: Difficulty, time: number): boolean {
+    if (difficultyStats[difficulty].bestTime.time > time) {
+      setBestTime(difficulty, time);
       return true;
     }
     return false;
   }
 
-  function setBestTime(time: number) {
-    difficultyStats.bestTime.time = time;
-    difficultyStats.bestTime.when = Date.now();
+  function setBestTime(difficulty: Difficulty, time: number) {
+    difficultyStats[difficulty].bestTime.time = time;
+    difficultyStats[difficulty].bestTime.when = Date.now();
     // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
+  }
+
+  function getCurrentGameDifficulty(): Difficulty {
+    return localStorage.getItem('currentGameDifficulty') as Difficulty;
   }
 
   function getStatisticsByDifficulty(difficulty: Difficulty): DifficultyStats {
     return getFromLocalStorage(difficulty, defaults);
   }
 
-  function updateSeries(result: GameResult) {
-    const lastGameResult = getLastGameResult();
+  function updateSeries(difficulty: Difficulty, result: GameResult) {
+    const lastGameResult = getLastGameResult(difficulty);
 
     if (lastGameResult !== result) {
-      // reset serie if result change
-      difficultyStats.series.current = 0;
+      // reset serie if result change (ex. lost -> win)
+      difficultyStats[difficulty].series.current = 0;
     }
 
     // increase the current serie
     if (result === GameResult.WIN) {
-      difficultyStats.series.current++;
+      difficultyStats[difficulty].series.current++;
     } else {
-      difficultyStats.series.current--;
+      difficultyStats[difficulty].series.current--;
     }
 
-    checkAndUpdateBestSeries(result);
+    checkAndUpdateBestSeries(difficulty, result);
 
   }
 
-  function getLastGameResult(): GameResult {
-    if (difficultyStats.series.current > 0) {
+  function getLastGameResult(difficulty: Difficulty): GameResult {
+    if (difficultyStats[difficulty].series.current > 0) {
       return GameResult.WIN;
     } else {
       return GameResult.LOST;
     }
   }
 
-  function checkAndUpdateBestSeries(result: GameResult): boolean {
+  function checkAndUpdateBestSeries(difficulty: Difficulty, result: GameResult): boolean {
     if (result === GameResult.WIN) {
-      if (difficultyStats.series.current > difficultyStats.series.longestWin) {
-        difficultyStats.series.longestWin = difficultyStats.series.current;
+      if (difficultyStats[difficulty].series.current > difficultyStats[difficulty].series.longestWin) {
+        difficultyStats[difficulty].series.longestWin = difficultyStats[difficulty].series.current;
         return true;
       }
     } else {
-      const currentLostSerie = Math.abs(difficultyStats.series.current);
-      if (currentLostSerie > difficultyStats.series.longestLost) {
-        difficultyStats.series.longestLost = currentLostSerie;
+      const currentLostSerie = Math.abs(difficultyStats[difficulty].series.current);
+      if (currentLostSerie > difficultyStats[difficulty].series.longestLost) {
+        difficultyStats[difficulty].series.longestLost = currentLostSerie;
         return true;
       }
     }
@@ -158,20 +165,20 @@ export const useStatisticsStore = defineStore("statistics", () => {
    * @param seconds 
    * @returns if there was an update of best time
    */
-  function updateStatistics(result: GameResult, seconds: number): boolean {
+  function updateStatistics(difficulty: Difficulty, result: GameResult, seconds: number): boolean {
     let bestTimeUpdated = false;
     if (result === GameResult.LOST) {
-      incrementLostGames();
+      incrementLostGames(getCurrentGameDifficulty());
       bestTimeUpdated = false;
     } else {
-      incrementWinGames();
-      bestTimeUpdated = checkAndUpdateBestTime(seconds);
+      incrementWinGames(getCurrentGameDifficulty());
+      bestTimeUpdated = checkAndUpdateBestTime(difficulty, seconds);
     }
 
-    updateTotalTime(seconds);
-    updateSeries(result);
+    updateTotalTime(getCurrentGameDifficulty(), seconds);
+    updateSeries(difficulty, result);
 
-    localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
+    localStorage.setItem(difficulty, JSON.stringify(difficultyStats[difficulty]));
 
     return bestTimeUpdated;
   }
