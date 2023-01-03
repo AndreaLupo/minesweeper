@@ -1,10 +1,5 @@
 <template>
   <HomeLink></HomeLink>
-  <div class="intro">
-    <span class="intro--text"
-      >Here you can find some statistics for each difficulty.</span
-    >
-  </div>
   <div class="wrapper">
     <div class="difficulty-selector">
       <div

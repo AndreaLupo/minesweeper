@@ -74,16 +74,16 @@ export const useStatisticsStore = defineStore("statistics", () => {
 
   function incrementLostGames() {
     difficultyStats.lostGames++;
-    localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
+    // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
   function incrementWinGames() {
     difficultyStats.winGames++;
-    localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
+    // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
 
   function updateTotalTime(seconds: number) {
     difficultyStats.totalTime = difficultyStats.totalTime + seconds;
-    localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
+    // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
 
   /**
@@ -102,11 +102,54 @@ export const useStatisticsStore = defineStore("statistics", () => {
   function setBestTime(time: number) {
     difficultyStats.bestTime.time = time;
     difficultyStats.bestTime.when = Date.now();
-    localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
+    // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
 
   function getStatisticsByDifficulty(difficulty: Difficulty): DifficultyStats {
     return getFromLocalStorage(difficulty, defaults);
+  }
+
+  function updateSeries(result: GameResult) {
+    const lastGameResult = getLastGameResult();
+
+    if (lastGameResult !== result) {
+      // reset serie if result change
+      difficultyStats.series.current = 0;
+    }
+
+    // increase the current serie
+    if (result === GameResult.WIN) {
+      difficultyStats.series.current++;
+    } else {
+      difficultyStats.series.current--;
+    }
+
+    checkAndUpdateBestSeries(result);
+
+  }
+
+  function getLastGameResult(): GameResult {
+    if (difficultyStats.series.current > 0) {
+      return GameResult.WIN;
+    } else {
+      return GameResult.LOST;
+    }
+  }
+
+  function checkAndUpdateBestSeries(result: GameResult): boolean {
+    if (result === GameResult.WIN) {
+      if (difficultyStats.series.current > difficultyStats.series.longestWin) {
+        difficultyStats.series.longestWin = difficultyStats.series.current;
+        return true;
+      }
+    } else {
+      const currentLostSerie = Math.abs(difficultyStats.series.current);
+      if (currentLostSerie > difficultyStats.series.longestLost) {
+        difficultyStats.series.longestLost = currentLostSerie;
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -126,7 +169,9 @@ export const useStatisticsStore = defineStore("statistics", () => {
     }
 
     updateTotalTime(seconds);
+    updateSeries(result);
 
+    localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
 
     return bestTimeUpdated;
   }
