@@ -71,7 +71,7 @@ const gameEndData = computed(function (): GameResultInfo {
   } else {
     let message = "";
     if (newRecord.value) {
-      message = "Best time!";
+      message = "You improved your best time!";
     } else {
       message = "You rock!";
     }

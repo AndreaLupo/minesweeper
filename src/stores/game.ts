@@ -205,8 +205,7 @@ export const useGameStore = defineStore("game", () => {
     console.log('End game with store!');
     gameResult.value = result;
     togglePauseTimer();
-    statisticsStore.updateStatistics(difficulty.value, result, gameDuration.seconds);
-    return false;
+    return statisticsStore.updateStatistics(difficulty.value, result, gameDuration.seconds);
   }
 
   /**
