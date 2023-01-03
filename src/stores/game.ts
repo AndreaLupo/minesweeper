@@ -12,7 +12,7 @@ import useTimer from '@/composable/timer';
 
 
 export const useGameStore = defineStore("game", () => {
-  console.log('Init gameStore.');
+  // console.log('Init gameStore.');
   const statisticsStore = useStatisticsStore();
 
   const gameResult = ref(GameResult.NOT_END);
@@ -228,7 +228,7 @@ export const useGameStore = defineStore("game", () => {
   }
 
 
-  console.log('Game store init completed');
+  // console.log('Game store init completed');
   return {
     countBombs,
     gameGrid,

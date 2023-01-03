@@ -121,7 +121,7 @@ export abstract class GameGrid implements GameStatusGrid {
       }
       this.cells[index] = row;
     }
-    console.log(`Num row: ${this.numRow}, num col: ${this.numCol}`)
+    // console.log(`Num row: ${this.numRow}, num col: ${this.numCol}`)
   }
 
 
