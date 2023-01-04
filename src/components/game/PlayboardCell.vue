@@ -1,13 +1,26 @@
 <template>
   <div
+    :id="`cell-${cell.row}-${cell.column}`"
     class="cell"
     v-if="cell.status !== CellStatus.CLOSED"
     :class="cellClass"
     @click.left="openCell"
     @click.right="goToNextCellStatus"
   >
-    <span v-if="cell.status === CellStatus.OPEN && cell.isBomb">
-      <font-awesome-icon icon="fa-solid fa-bomb" />
+    <!-- <font-awesome-icon
+      v-if="isWrongFlag"
+      class="x-icon"
+      icon="fa-solid fa-xmark"
+    /> -->
+    <span
+      v-if="
+        (cell.status === CellStatus.OPEN || cell.status === CellStatus.BOOM) &&
+        cell.isBomb
+      "
+    >
+      <transition name="tr-bomb-icon">
+        <font-awesome-icon icon="fa-solid fa-bomb" />
+      </transition>
     </span>
     <span
       v-else-if="cell.status === CellStatus.OPEN && !cell.hasBombsNearby"
@@ -28,6 +41,7 @@
     </span>
   </div>
   <div
+    :id="`cell-${cell.row}-${cell.column}`"
     v-else
     class="cell cell-closed"
     :class="closedCssClass"
@@ -66,6 +80,7 @@ console.log("Num row reactive? ", isReactive(gameStore.gameGrid.numRow)); */
 
 const { selectedCell, gameResult } = storeToRefs(gameStore);
 const selected = reactive({ isSelected: false });
+const isWrongFlag = ref(false);
 
 const props = defineProps({
   cell: { type: Cell, required: true },
@@ -74,6 +89,10 @@ const props = defineProps({
 // console.log("Prop cell reactive?", isReactive(props.cell));
 let cell = reactive(props.cell);
 
+const exploded = computed(() => {
+  return cell.status === CellStatus.BOOM;
+});
+
 const cellClass = computed(() => {
   const isZero = !cell.hasBombsNearby;
   let classes: {
@@ -81,14 +100,18 @@ const cellClass = computed(() => {
     num: boolean;
     "cell-mini"?: boolean;
     "cell-maxi"?: boolean;
+    "wrong-flag"?: boolean;
     selected?: boolean;
+    exploded: boolean;
   } = {
     "num-0": isZero,
     num: !isZero,
+    exploded: exploded.value,
   };
   classes["cell-mini"] = cellMiniCssClass()["cell-mini"];
   classes["cell-maxi"] = cellMaxiCssClass()["cell-maxi"];
   classes["selected"] = isSelected()["selected"];
+  classes["wrong-flag"] = hasWrongFlagClass()["wrong-flag"];
   return classes;
 });
 const closedCssClass = computed(() => {
@@ -104,10 +127,6 @@ const numberShownClass = computed((): string => {
   return `num num-${cell.numberShown}`;
 });
 
-const isWrongFlag = computed((): boolean => {
-  return gameResult.value === GameResult.LOST && cell.hasFlag && !cell.isBomb;
-});
-
 watch(selectedCell, () => {
   if (gameStore.isCellSelected(cell)) {
     // add class selected
@@ -116,6 +135,11 @@ watch(selectedCell, () => {
     // remove class selected
     selected.isSelected = false;
   }
+});
+
+watch(gameResult, () => {
+  isWrongFlag.value =
+    gameResult.value === GameResult.LOST && cell.hasFlag && !cell.isBomb;
 });
 
 function cellMiniCssClass() {
@@ -139,7 +163,7 @@ function isSelected() {
 }
 function hasWrongFlagClass() {
   return {
-    "wrong-flag": isWrongFlag,
+    "wrong-flag": isWrongFlag.value,
   };
 }
 
@@ -182,6 +206,11 @@ const goToNextCellStatus = (event: Event) => {
     background-color: var(--color-primary);
   }
 
+  &.exploded .fa-bomb {
+    color: red;
+    font-size: 1.4rem;
+  }
+
   span {
     position: absolute;
     top: 50%;
@@ -197,9 +226,27 @@ const goToNextCellStatus = (event: Event) => {
     background-color: var(--color-primary-bright);
   }
 
-  .wrong-flag {
-    background-color: var(--color-accent);
+  &.wrong-flag {
+    position: relative;
+    background-color: #d67c73;
+    /* .x-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      font-size: 2.4rem;
+      color: #ba2416;
+    } */
   }
+
+  .tr-bomb-icon-enter-active {
+    transition: all 1s ease;
+  }
+  .tr-bomb-icon-enter-from {
+    color: black;
+  }
+
   .fa-bomb {
     color: black;
     font-size: 1.3rem;

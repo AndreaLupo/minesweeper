@@ -1,11 +1,11 @@
 import { BOMB } from "./grid/GameGrid";
 
 export enum CellStatus {
-  CLOSED,
-  OPEN,
-  QUESTION_MARK,
-  FLAGGED,
-  BOOM
+  CLOSED = "CLOSED",
+  OPEN = "OPEN",
+  QUESTION_MARK = "QUESTION_MARK",
+  FLAGGED = "FLAGGED",
+  BOOM = "BOOM"
 }
 
 

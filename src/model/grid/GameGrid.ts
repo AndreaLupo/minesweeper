@@ -328,7 +328,7 @@ export abstract class GameGrid implements GameStatusGrid {
   openNotFlaggedCells() {
     for (const rowCells of this.cells) {
       for (const cell of rowCells) {
-        if (!cell.hasFlag) {
+        if (!cell.hasFlag && cell.status !== CellStatus.BOOM) {
           cell.status = CellStatus.OPEN;
         }
       }

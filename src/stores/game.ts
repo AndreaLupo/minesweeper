@@ -83,10 +83,6 @@ export const useGameStore = defineStore("game", () => {
     restoreBombs();
   }
 
-  function automaticopenCellsAround(cell: Cell): void {
-    gameGrid.automaticOpenAdjacentEmptyCell(cell);
-  }
-
   function openCell(cell: Cell) {
     if (firstClick.value) {
       firstClick.value = false;
@@ -108,6 +104,7 @@ export const useGameStore = defineStore("game", () => {
       setTimeout(() => {
         endGame(GameResult.LOST);
       }, 300);
+      return;
     }
 
     if (
@@ -120,9 +117,8 @@ export const useGameStore = defineStore("game", () => {
     if (!cell.hasBombsNearby) {
       // cell will be opened in automatic cell update
       openCellsAround(cell);
-    } else {
-      cell.status = CellStatus.OPEN;
     }
+    cell.status = CellStatus.OPEN;
   }
 
   function openCellsAround(cell: Cell) {
@@ -244,7 +240,6 @@ export const useGameStore = defineStore("game", () => {
     incrementBombs,
     decrementBombs,
     restoreBombs,
-    automaticopenCellsAround,
     initGrid,
     openCell,
     openCellsAround,
