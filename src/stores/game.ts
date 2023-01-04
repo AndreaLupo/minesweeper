@@ -167,7 +167,7 @@ export const useGameStore = defineStore("game", () => {
         newRow = (selectedCell.value.row + 1) % gameGrid.numRow;
         break;
       case 'LEFT':
-        newCol = (selectedCell.value.column - 1) % gameGrid.numCol;
+        newCol = selectedCell.value.column - 1 >= 0 ? selectedCell.value.column - 1 : gameGrid.numCol - 1;
         newRow = selectedCell.value.row;
         break;
       case 'RIGHT':
@@ -176,7 +176,7 @@ export const useGameStore = defineStore("game", () => {
         break;
       case 'UP':
         newCol = selectedCell.value.column;
-        newRow = (selectedCell.value.row - 1) % gameGrid.numRow;
+        newRow = selectedCell.value.row - 1 >= 0 ? selectedCell.value.row - 1 : gameGrid.numRow - 1;
         break;
     }
     selectedCell.value = gameGrid.getCell(newRow, newCol);
