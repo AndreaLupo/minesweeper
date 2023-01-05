@@ -4,7 +4,7 @@ import { gameSettings } from '../model/GameSettings';
 import { useStatisticsStore } from './statistics';
 import { CellStatus } from '../model/Cell';
 import { Difficulty, GameResult } from '../model/grid/GameGrid';
-import { reactive, ref } from "vue";
+import { reactive, ref, isReactive } from "vue";
 import { defineStore } from "pinia";
 import { FixedGrid } from "../model/grid/FixedGrid";
 import type { Cell } from '../model/Cell';
@@ -112,6 +112,7 @@ export const useGameStore = defineStore("game", () => {
       cell.status === CellStatus.OPEN &&
       cell.numberShown === gameGrid.countFlagsAround(cell)
     ) {
+      // user has set all the flag. He could be wrong - in that case he loose!
       openCellsAround(cell);
     }
 
@@ -205,6 +206,17 @@ export const useGameStore = defineStore("game", () => {
     return highlightedCell.value.column === cell.column && highlightedCell.value.row === cell.row;
   }
 
+  function makeCellsNotClickable() {
+    for (let row = 0; row < gameGrid.numRow; row++) {
+      for (let col = 0; col < gameGrid.numCol; col++) {
+        makeCellClickable(row, col, false);
+      }
+    }
+  }
+
+  function makeCellClickable(row: number, column: number, clickable: boolean = true) {
+    gameGrid.getCell(row, column).clickable = clickable;
+  }
 
   /**
    * Process the result, stops the timer and update the statistics.
@@ -237,7 +249,6 @@ export const useGameStore = defineStore("game", () => {
     firstClick.value = true;
   }
 
-
   // console.log('Game store init completed');
   return {
     countBombs,
@@ -253,6 +264,8 @@ export const useGameStore = defineStore("game", () => {
     highlightCellRequested,
     isCellHighLighted,
     isCellSelected,
+    makeCellsNotClickable,
+    makeCellClickable,
     incrementBombs,
     decrementBombs,
     restoreBombs,

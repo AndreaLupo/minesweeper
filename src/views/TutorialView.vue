@@ -22,13 +22,19 @@ import { Difficulty } from "@/model/grid/GameGrid";
 import { steps, type Step } from "@/model/TutorialSteps";
 import { useGameStore } from "@/stores/game";
 import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 const gameStore = useGameStore();
 gameStore.setTutorial(true);
 gameStore.setDifficulty(Difficulty.TUTORIAL);
 
 const selectedStep = ref(0);
 const { gameGrid } = storeToRefs(gameStore);
+
+onMounted(() => {
+  // wait that GamePlayboard component is mounted, then update cells.
+  // Otherwise game.initGrid() will override the cells!
+  gameStore.makeCellsNotClickable();
+});
 
 const goToNextStep = () => {
   if (selectedStep.value === steps.length - 1) {
@@ -38,15 +44,18 @@ const goToNextStep = () => {
   switch (selectedStep.value) {
     case 1:
       gameStore.highlightCellRequested(0, 0);
+      gameStore.makeCellClickable(0, 0);
       break;
     case 3:
       gameStore.highlightCellRequested(2, 1);
       break;
     case 4:
       gameStore.highlightCellRequested(2, 2);
+      gameStore.makeCellClickable(2, 2);
       break;
     case 5:
       gameStore.highlightCellRequested(2, 3);
+      gameStore.makeCellClickable(2, 3);
       break;
     case 6:
       gameStore.highlightCellRequested(0, 3);
