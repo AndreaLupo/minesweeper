@@ -1,6 +1,6 @@
 <template>
   <HomeLink></HomeLink>
-  <span class="text">Choose difficulty</span>
+  <div class="text">Choose difficulty</div>
   <div class="difficulties">
     <a href="#" @click.prevent="start(Difficulty.EASY)">Easy</a>
     <a href="#" @click.prevent="start(Difficulty.MEDIUM)">Medium</a>
@@ -34,6 +34,10 @@ const start = (level: Difficulty) => {
   gap: 4px;
   padding: 1rem;
   width: 25vw;
+
+  @media (max-width: 1000px) {
+    width: 50vw;
+  }
 
   .diff {
     padding: 1rem;

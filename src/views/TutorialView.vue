@@ -9,7 +9,7 @@
       </transition>
       <span v-if="showNext" class="next" @click="goToNextStep">Next</span>
     </div>
-    <div>
+    <div class="playboard">
       <GamePlayboard></GamePlayboard>
     </div>
     <div></div>
@@ -77,10 +77,23 @@ const showNext = computed((): boolean => {
   column-gap: 2rem;
   color: var(--text-color-bright);
 
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+
   .help-column {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+
+    @media (max-width: 700px) {
+      grid-row: 2;
+      margin: 1rem 0 1rem 0;
+    }
   }
 
   &-text {
@@ -107,6 +120,29 @@ const showNext = computed((): boolean => {
   .text-leave-to {
     transform: translateX(40px);
     opacity: 0;
+  }
+
+  .playboard {
+    @media (max-width: 1200px) {
+      margin: 0 4rem;
+    }
+
+    @media (max-width: 1000px) {
+      margin: 0 1rem;
+    }
+
+    @media (max-width: 1000px) {
+      margin: 0;
+    }
+
+    @media (max-width: 700px) {
+      grid-row: 1;
+      margin: 0 6rem;
+    }
+
+    @media (max-width: 550px) {
+      margin: 0 4rem;
+    }
   }
 }
 </style>

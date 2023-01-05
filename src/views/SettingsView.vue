@@ -73,9 +73,14 @@ function doNothing() {
 
 <style scoped lang="scss">
 .container {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 4rem;
   position: relative;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
 
   .anti-click {
     position: absolute;

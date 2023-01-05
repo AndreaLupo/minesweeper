@@ -1,10 +1,10 @@
 <template>
   <div class="wrapper">
     <h1>Minesweeper</h1>
-    <RouterLink to="start">New Game</RouterLink>
-    <RouterLink to="statistics">Statistics</RouterLink>
-    <RouterLink to="tutorial">Tutorial</RouterLink>
-    <RouterLink to="settings">Settings</RouterLink>
+    <RouterLink class="margin" to="start">New Game</RouterLink>
+    <RouterLink class="margin" to="statistics">Statistics</RouterLink>
+    <RouterLink class="margin" to="tutorial">Tutorial</RouterLink>
+    <RouterLink class="margin" to="settings">Settings</RouterLink>
   </div>
 </template>
 
@@ -28,6 +28,14 @@
     margin-bottom: 1rem;
   }
 
+  @media (max-width: 1000px) {
+    width: 50vw;
+  }
+
   @include animated-button;
+
+  a.margin {
+    margin-bottom: 8px;
+  }
 }
 </style>
