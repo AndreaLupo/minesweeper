@@ -52,30 +52,17 @@ export const useStatisticsStore = defineStore("statistics", () => {
     return reactive(diffStats);
   }
 
-  const defaults: DifficultyStats = {
-    lostGames: 0,
-    winGames: 0,
-    bestTime: {
-      time: 100000000,
-      when: Date.parse('1/01/1970')
-    },
-    series: {
-      longestWin: 0,
-      longestLost: 0,
-      current: 0
-    },
-    totalTime: 0
-  }
   type DifficultyStatsReference = Record<Difficulty, DifficultyStats>;
   const difficultyStats: DifficultyStatsReference = reactive({
-    [Difficulty.EASY]: getFromLocalStorage(Difficulty.EASY, defaults),
-    [Difficulty.MEDIUM]: getFromLocalStorage(Difficulty.MEDIUM, defaults),
-    [Difficulty.DIFFICULT]: getFromLocalStorage(Difficulty.DIFFICULT, defaults),
-    [Difficulty.TUTORIAL]: getFromLocalStorage(Difficulty.TUTORIAL, defaults),
-    [Difficulty.SAMPLE]: getFromLocalStorage(Difficulty.SAMPLE, defaults),
+    [Difficulty.EASY]: getFromLocalStorage(Difficulty.EASY),
+    [Difficulty.MEDIUM]: getFromLocalStorage(Difficulty.MEDIUM),
+    [Difficulty.DIFFICULT]: getFromLocalStorage(Difficulty.DIFFICULT),
+    [Difficulty.TUTORIAL]: getFromLocalStorage(Difficulty.TUTORIAL),
+    [Difficulty.SAMPLE]: getFromLocalStorage(Difficulty.SAMPLE),
   });
 
   function incrementLostGames(difficulty: Difficulty) {
+    debugger;
     difficultyStats[difficulty].lostGames++;
     // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
