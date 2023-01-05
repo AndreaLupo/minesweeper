@@ -62,7 +62,6 @@ export const useStatisticsStore = defineStore("statistics", () => {
   });
 
   function incrementLostGames(difficulty: Difficulty) {
-    debugger;
     difficultyStats[difficulty].lostGames++;
     // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
