@@ -37,25 +37,25 @@ const goToNextStep = () => {
   selectedStep.value++;
   switch (selectedStep.value) {
     case 1:
-      gameStore.selectCellRequested(0, 0);
+      gameStore.highlightCellRequested(0, 0);
       break;
     case 3:
-      gameStore.selectCellRequested(2, 1);
+      gameStore.highlightCellRequested(2, 1);
       break;
     case 4:
-      gameStore.selectCellRequested(2, 2);
+      gameStore.highlightCellRequested(2, 2);
       break;
     case 5:
-      gameStore.selectCellRequested(2, 3);
+      gameStore.highlightCellRequested(2, 3);
       break;
     case 6:
-      gameStore.selectCellRequested(0, 3);
+      gameStore.highlightCellRequested(0, 3);
       break;
     case 7:
-      gameStore.selectCellRequested(4, 3);
+      gameStore.highlightCellRequested(4, 3);
       break;
     case 8:
-      gameStore.selectCellRequested(2, 3);
+      gameStore.highlightCellRequested(2, 3);
       break;
   }
 };

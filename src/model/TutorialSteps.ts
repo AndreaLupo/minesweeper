@@ -52,6 +52,11 @@ export const steps: Step[] = [
   },
   {
     index: 9,
+    text: "You can play with the keyboard too: use arrows to select a cell, 'Space bar' to open a cell, 'B' to set a flag.",
+    isSelected: false,
+  },
+  {
+    index: 10,
     text: "You can now complete the game!",
     isSelected: false,
   },

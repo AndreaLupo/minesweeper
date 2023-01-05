@@ -20,8 +20,10 @@
   </div>
 
   <div class="buttons">
-    <div class="btn" @click="newGame">New game</div>
-    <div class="btn" @click="changeDifficulty">Change difficulty</div>
+    <div v-if="!isTutorial" class="btn" @click="newGame">New game</div>
+    <div v-if="!isTutorial" class="btn" @click="changeDifficulty">
+      Change difficulty
+    </div>
     <div class="btn" @click="restartGame">Restart this game</div>
     <div class="btn" @click="goToHome">Go to menu</div>
   </div>
@@ -41,6 +43,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { computed, onMounted, toRefs, type PropType } from "vue";
 import { storeToRefs } from "pinia";
+import { Difficulty } from "@/model/grid/GameGrid";
 
 const gameStore = useGameStore();
 library.add(faFaceFrown);
@@ -62,6 +65,7 @@ const props = defineProps({
 const emit = defineEmits(["closeModal", "openCells"]);
 
 const { gameEndData, showModal } = toRefs(props);
+const { difficulty } = storeToRefs(gameStore);
 
 const icon = computed(() => {
   if (gameEndData.value.win) {
@@ -73,6 +77,10 @@ const icon = computed(() => {
   } else {
     return "fa-face-frown";
   }
+});
+
+const isTutorial = computed(() => {
+  return difficulty.value === Difficulty.TUTORIAL;
 });
 
 const newGame = () => {

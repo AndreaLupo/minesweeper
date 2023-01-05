@@ -78,9 +78,10 @@ console.log(
 );
 console.log("Num row reactive? ", isReactive(gameStore.gameGrid.numRow)); */
 
-const { selectedCell, gameResult } = storeToRefs(gameStore);
+const { selectedCell, highlightedCell, gameResult } = storeToRefs(gameStore);
 const selected = reactive({ isSelected: false });
 const isWrongFlag = ref(false);
+const highlighted = ref(false);
 
 const props = defineProps({
   cell: { type: Cell, required: true },
@@ -103,6 +104,7 @@ const cellClass = computed(() => {
     "wrong-flag"?: boolean;
     selected?: boolean;
     exploded: boolean;
+    highlighted?: boolean;
   } = {
     "num-0": isZero,
     num: !isZero,
@@ -111,6 +113,7 @@ const cellClass = computed(() => {
   classes["cell-mini"] = cellMiniCssClass()["cell-mini"];
   classes["cell-maxi"] = cellMaxiCssClass()["cell-maxi"];
   classes["selected"] = isSelected()["selected"];
+  classes["highlighted"] = isHighlighted()["highlighted"];
   classes["wrong-flag"] = hasWrongFlagClass()["wrong-flag"];
   return classes;
 });
@@ -119,6 +122,7 @@ const closedCssClass = computed(() => {
     ...cellMiniCssClass(),
     ...cellMaxiCssClass(),
     ...isSelected(),
+    ...isHighlighted(),
     ...hasWrongFlagClass(),
   };
 });
@@ -134,6 +138,16 @@ watch(selectedCell, () => {
   } else {
     // remove class selected
     selected.isSelected = false;
+  }
+});
+
+watch(highlightedCell, () => {
+  if (gameStore.isCellHighLighted(cell)) {
+    // add class selected
+    highlighted.value = true;
+  } else {
+    // remove class selected
+    highlighted.value = false;
   }
 });
 
@@ -159,6 +173,11 @@ function cellMaxiCssClass() {
 function isSelected() {
   return {
     selected: selected.isSelected,
+  };
+}
+function isHighlighted() {
+  return {
+    highlighted: highlighted.value,
   };
 }
 function hasWrongFlagClass() {
@@ -224,6 +243,11 @@ const goToNextCellStatus = (event: Event) => {
     box-sizing: border-box;
     box-shadow: inset 0px 0px 0px 3px var(--color-accent);
     background-color: var(--color-primary-bright);
+  }
+
+  &.highlighted {
+    box-sizing: border-box;
+    box-shadow: inset 0px 0px 0px 4px var(--tutorial-color);
   }
 
   &.wrong-flag {

@@ -13,6 +13,7 @@ export class Cell {
   status: CellStatus = CellStatus.CLOSED;
   numberShown: number = 0;
   public clickable: boolean = true;
+  public isHighlighted: boolean = false;
 
   constructor(public key: number, public row: number, public column: number) {
 

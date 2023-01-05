@@ -27,6 +27,7 @@ export const useGameStore = defineStore("game", () => {
 
   const firstCell = ref<Cell>(gameGrid.getCell(0, 0));
   const selectedCell = firstCell;
+  const highlightedCell = ref<Cell | null>(null);
   const { gameDuration, createTimer, resetTime, togglePauseTimer } = useTimer();
   if (isTutorial()) {
     for (const cells of gameGrid.cellList) {
@@ -193,6 +194,18 @@ export const useGameStore = defineStore("game", () => {
     return selectedCell.value.column === cell.column && selectedCell.value.row === cell.row;
   }
 
+  function highlightCellRequested(row: number, column: number) {
+    highlightedCell.value = gameGrid.getCell(row, column);
+  }
+
+  function isCellHighLighted(cell: Cell) {
+    if (highlightedCell.value == null) {
+      return false;
+    }
+    return highlightedCell.value.column === cell.column && highlightedCell.value.row === cell.row;
+  }
+
+
   /**
    * Process the result, stops the timer and update the statistics.
    * @param result 
@@ -232,10 +245,13 @@ export const useGameStore = defineStore("game", () => {
     gameResult,
     difficulty,
     selectedCell,
+    highlightedCell,
     setTutorial,
     setDifficulty,
     selectCell,
     selectCellRequested,
+    highlightCellRequested,
+    isCellHighLighted,
     isCellSelected,
     incrementBombs,
     decrementBombs,
