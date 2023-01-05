@@ -100,7 +100,7 @@ export const useStatisticsStore = defineStore("statistics", () => {
   }
 
   function getStatisticsByDifficulty(difficulty: Difficulty): DifficultyStats {
-    return getFromLocalStorage(difficulty, defaults);
+    return getFromLocalStorage(difficulty);
   }
 
   function updateSeries(difficulty: Difficulty, result: GameResult) {
