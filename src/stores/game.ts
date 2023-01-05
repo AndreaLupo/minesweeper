@@ -6,9 +6,9 @@ import { CellStatus } from '../model/Cell';
 import { Difficulty, GameResult } from '../model/grid/GameGrid';
 import { reactive, ref } from "vue";
 import { defineStore } from "pinia";
-import { FixedGrid } from "@/model/grid/FixedGrid";
-import type { Cell } from '@/model/Cell';
-import useTimer from '@/composable/timer';
+import { FixedGrid } from "../model/grid/FixedGrid";
+import type { Cell } from '../model/Cell';
+import useTimer from '../composable/timer';
 
 
 export const useGameStore = defineStore("game", () => {
