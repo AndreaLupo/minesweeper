@@ -102,7 +102,7 @@ dialog {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  background-color: var(--background-light);
+  background-color: var(--modal-background);
 }
 
 header {

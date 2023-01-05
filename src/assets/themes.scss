@@ -12,6 +12,8 @@
 
   --text-color-bright: #f0d9d4;
   --text-color: var(--color-secondary);
+
+  --modal-background: var(--color-secondary-dark);
 }
 
 [theme="dark"] {
@@ -27,6 +29,8 @@
 
   --text-color-bright: #88a0a8;
   --text-color: var(--color-secondary);
+
+  --modal-background: var();
 }
 
 /* Fixed colors */
