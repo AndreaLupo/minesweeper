@@ -1,6 +1,8 @@
+import { LocalStorageManager } from './../composable/statisticsManagers/LocalStorageManager';
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
 import { defineStore } from "pinia";
 import { reactive } from "vue";
+import type { StatisticsManager } from '@/model/statistics/StatisticsManager';
 
 type BestTime = {
   time: number;
@@ -22,57 +24,28 @@ export interface DifficultyStats {
   totalTime: number;
 }
 
-
 export const useStatisticsStore = defineStore("statistics", () => {
 
-  const getFromLocalStorage = function (difficulty: Difficulty, defaults?: DifficultyStats): DifficultyStats {
-    const storage: string | null = localStorage.getItem(difficulty);
-    let diffStats: DifficultyStats;
-    if (storage) {
-      diffStats = JSON.parse(storage);
-    } else if (defaults) {
-      diffStats = defaults;
-    } else {
-      diffStats = {
-        lostGames: 0,
-        winGames: 0,
-        bestTime: {
-          time: 100000000,
-          when: Date.parse('1/01/1970')
-        },
-        series: {
-          longestWin: 0,
-          longestLost: 0,
-          current: 0
-        },
-        totalTime: 0
-      };
-    }
-
-    return reactive(diffStats);
-  }
+  const statisticsManager: StatisticsManager = new LocalStorageManager();
 
   type DifficultyStatsReference = Record<Difficulty, DifficultyStats>;
   const difficultyStats: DifficultyStatsReference = reactive({
-    [Difficulty.EASY]: getFromLocalStorage(Difficulty.EASY),
-    [Difficulty.MEDIUM]: getFromLocalStorage(Difficulty.MEDIUM),
-    [Difficulty.DIFFICULT]: getFromLocalStorage(Difficulty.DIFFICULT),
-    [Difficulty.TUTORIAL]: getFromLocalStorage(Difficulty.TUTORIAL),
-    [Difficulty.SAMPLE]: getFromLocalStorage(Difficulty.SAMPLE),
+    [Difficulty.EASY]: statisticsManager.getStatisticsByDifficulty(Difficulty.EASY),
+    [Difficulty.MEDIUM]: statisticsManager.getStatisticsByDifficulty(Difficulty.MEDIUM),
+    [Difficulty.DIFFICULT]: statisticsManager.getStatisticsByDifficulty(Difficulty.DIFFICULT),
+    [Difficulty.TUTORIAL]: statisticsManager.getStatisticsByDifficulty(Difficulty.TUTORIAL),
+    [Difficulty.SAMPLE]: statisticsManager.getStatisticsByDifficulty(Difficulty.SAMPLE),
   });
 
   function incrementLostGames(difficulty: Difficulty) {
     difficultyStats[difficulty].lostGames++;
-    // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
   function incrementWinGames(difficulty: Difficulty) {
     difficultyStats[difficulty].winGames++;
-    // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
 
   function updateTotalTime(difficulty: Difficulty, seconds: number) {
     difficultyStats[difficulty].totalTime = difficultyStats[difficulty].totalTime + seconds;
-    // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
 
   /**
@@ -91,7 +64,6 @@ export const useStatisticsStore = defineStore("statistics", () => {
   function setBestTime(difficulty: Difficulty, time: number) {
     difficultyStats[difficulty].bestTime.time = time;
     difficultyStats[difficulty].bestTime.when = Date.now();
-    // localStorage.setItem(difficulty, JSON.stringify(difficultyStats));
   }
 
   function getCurrentGameDifficulty(): Difficulty {
@@ -99,7 +71,7 @@ export const useStatisticsStore = defineStore("statistics", () => {
   }
 
   function getStatisticsByDifficulty(difficulty: Difficulty): DifficultyStats {
-    return getFromLocalStorage(difficulty);
+    return reactive(statisticsManager.getStatisticsByDifficulty(difficulty));
   }
 
   function updateSeries(difficulty: Difficulty, result: GameResult) {
@@ -164,7 +136,7 @@ export const useStatisticsStore = defineStore("statistics", () => {
     updateTotalTime(getCurrentGameDifficulty(), seconds);
     updateSeries(difficulty, result);
 
-    localStorage.setItem(difficulty, JSON.stringify(difficultyStats[difficulty]));
+    statisticsManager.updateStatisticsByDifficulty(difficulty, difficultyStats[difficulty]);
 
     return bestTimeUpdated;
   }
