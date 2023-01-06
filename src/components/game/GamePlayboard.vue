@@ -1,5 +1,5 @@
 <template>
-  <div class="grid" @keydown="manageKeyboardInput">
+  <div class="grid">
     <MineModal
       :show="showModal"
       @close="showModal = false"
@@ -20,19 +20,16 @@
       :cell="cell"
     ></PlayboardCell>
   </div>
-  <input
-    class="hidden-input"
-    @keydown="manageKeyboardInput"
-    autofocus
-    ref="keyDetector"
-  />
+
+  <KeyboardEventListener
+    @keyboard-input="manageKeyboardInput"
+  ></KeyboardEventListener>
 </template>
 
 <script setup lang="ts">
 import type { Cell } from "@/model/Cell";
 import { GameResultInfo } from "@/model/GameResultInfo";
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
-import type { InputFocusable } from "@/model/InputFocusable";
 import { useGameStore } from "@/stores/game";
 import { storeToRefs } from "pinia";
 import { computed, onMounted, reactive, ref, watch, type Ref } from "vue";
@@ -40,6 +37,8 @@ import MineModal from "../ui/MineModal.vue";
 import PlayboardCell from "./PlayboardCell.vue";
 
 import EndgameModalContent from "./EndgameModalContent.vue";
+import KeyboardEventListener from "../ui/KeyboardEventListener.vue";
+import type AvailableKeyboardEvent from "@/model/keyboard/AvailableKeyboardEvents";
 
 console.log("Init game playboard");
 const gameStore = useGameStore();
@@ -53,9 +52,6 @@ const newRecord: Ref<boolean | null> = ref(null);
 
 // useful when end a match and start a new one passing from menu
 gameStore.restart();
-
-// null for initial value, focus for input
-const keyDetector = ref<InputFocusable>(null);
 
 const cssNumColumnFr = computed(function (): string {
   return `repeat(${gameGrid.value.numCol}, 1fr)`;
@@ -101,15 +97,6 @@ watch(gameComplete, () => {
   isGameEnding();
 });
 
-onMounted(() => {
-  const timer = setInterval(() => {
-    // set focus on hidden input. 1 second is enough since the user requires some time to switch from mouse to keyboard.
-    if (keyDetector.value) {
-      keyDetector.value.focus();
-    }
-  }, 1000);
-});
-
 const isGameEnding = (): void => {
   if (countBombs.value === 0 && gameComplete) {
     let result: GameResult;
@@ -123,11 +110,12 @@ const isGameEnding = (): void => {
   }
 };
 
-const manageKeyboardInput = (event: KeyboardEvent) => {
+const manageKeyboardInput = (event: AvailableKeyboardEvent) => {
+  console.log(event);
   if (gameResult.value !== GameResult.NOT_END) {
     return;
   }
-  switch (event.code) {
+  switch (event) {
     case "ArrowUp":
       gameStore.selectCell("UP");
       break;
