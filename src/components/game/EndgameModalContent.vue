@@ -41,7 +41,7 @@ import {
   faHourglassStart,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { computed, onMounted, toRefs, type PropType } from "vue";
+import { computed, toRefs, type PropType } from "vue";
 import { storeToRefs } from "pinia";
 import { Difficulty } from "@/model/grid/GameGrid";
 
@@ -64,7 +64,7 @@ const props = defineProps({
 
 const emit = defineEmits(["closeModal", "openCells"]);
 
-const { gameEndData, showModal } = toRefs(props);
+const { gameEndData } = toRefs(props);
 const { difficulty } = storeToRefs(gameStore);
 
 const icon = computed(() => {

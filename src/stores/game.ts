@@ -4,7 +4,7 @@ import { gameSettings } from '../model/GameSettings';
 import { useStatisticsStore } from './statistics';
 import { CellStatus } from '../model/Cell';
 import { Difficulty, GameResult } from '../model/grid/GameGrid';
-import { reactive, ref, isReactive } from "vue";
+import { reactive, ref } from "vue";
 import { defineStore } from "pinia";
 import { FixedGrid } from "../model/grid/FixedGrid";
 import type { Cell } from '../model/Cell';
@@ -50,10 +50,6 @@ export const useGameStore = defineStore("game", () => {
     localStorage.setItem('tutorial', tutorialActive.toString());
   }
 
-  function getDifficulty() {
-    const difficulty = localStorage.getItem('currentGameDifficulty') as Difficulty;
-    return ref(difficulty);
-  }
   function setDifficulty(diff: Difficulty) {
     localStorage.setItem("currentGameDifficulty", diff);
     difficulty.value = diff;

@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 import { Cell, CellStatus } from "@/model/Cell";
-import { computed, isReactive, reactive, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 
 /* import the fontawesome core */
 import { library } from "@fortawesome/fontawesome-svg-core";

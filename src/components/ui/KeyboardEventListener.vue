@@ -18,7 +18,7 @@ const keyDetector = ref<InputFocusable>(null);
 const emit = defineEmits(["keyboard-input"]);
 
 onMounted(() => {
-  const timer = setInterval(() => {
+  setInterval(() => {
     // set focus on hidden input. 1 second is enough since the user requires some time to switch from mouse to keyboard.
     if (keyDetector.value) {
       keyDetector.value.focus();

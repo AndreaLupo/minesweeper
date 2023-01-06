@@ -32,7 +32,7 @@ import { GameResultInfo } from "@/model/GameResultInfo";
 import { Difficulty, GameResult } from "@/model/grid/GameGrid";
 import { useGameStore } from "@/stores/game";
 import { storeToRefs } from "pinia";
-import { computed, onMounted, reactive, ref, watch, type Ref } from "vue";
+import { computed, ref, watch, type Ref } from "vue";
 import MineModal from "../ui/MineModal.vue";
 import PlayboardCell from "./PlayboardCell.vue";
 
@@ -40,7 +40,6 @@ import EndgameModalContent from "./EndgameModalContent.vue";
 import KeyboardEventListener from "../ui/KeyboardEventListener.vue";
 import type AvailableKeyboardEvent from "@/model/keyboard/AvailableKeyboardEvents";
 
-console.log("Init game playboard");
 const gameStore = useGameStore();
 const difficulty: Difficulty = localStorage.getItem(
   "currentGameDifficulty"
@@ -90,7 +89,7 @@ watch(gameResult, (result: GameResult) => {
   }
 });
 
-watch(countBombs, (bombsCount: number) => {
+watch(countBombs, () => {
   isGameEnding();
 });
 watch(gameComplete, () => {
@@ -111,7 +110,6 @@ const isGameEnding = (): void => {
 };
 
 const manageKeyboardInput = (event: AvailableKeyboardEvent) => {
-  console.log(event);
   if (gameResult.value !== GameResult.NOT_END) {
     return;
   }
