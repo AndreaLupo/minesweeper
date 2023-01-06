@@ -70,20 +70,6 @@ export const useGameStore = defineStore("game", () => {
     countBombs.value = gameSettings[difficulty.value].numBombs;
   }
 
-
-
-
-  function initGrid(newDifficulty: Difficulty): void {
-    difficulty.value = newDifficulty;
-    if (isTutorial()) {
-      Object.assign(gameGrid, reactive(new FixedGrid(newDifficulty)));
-    } else {
-      Object.assign(gameGrid, reactive(new RandomGrid(newDifficulty)));
-    }
-    // gameGrid.printDebugGrid('numbers');
-    restoreBombs();
-  }
-
   function openCell(cell: Cell) {
     if (firstClick.value) {
       firstClick.value = false;
@@ -218,17 +204,7 @@ export const useGameStore = defineStore("game", () => {
     gameGrid.getCell(row, column).clickable = clickable;
   }
 
-  /**
-   * Process the result, stops the timer and update the statistics.
-   * @param result 
-   * @returns true if there was a best time update.
-   */
-  function endGame(result: GameResult): boolean {
-    //console.log('End game with store!');
-    gameResult.value = result;
-    togglePauseTimer();
-    return statisticsStore.updateStatistics(difficulty.value, result, gameDuration.seconds);
-  }
+
 
   /**
    * Return the number of cell with a flag around the current cell.
@@ -240,13 +216,41 @@ export const useGameStore = defineStore("game", () => {
   }
 
 
+  function initGrid(newDifficulty: Difficulty): void {
+    difficulty.value = newDifficulty;
+    if (isTutorial()) {
+      Object.assign(gameGrid, reactive(new FixedGrid(newDifficulty)));
+    } else {
+      Object.assign(gameGrid, reactive(new RandomGrid(newDifficulty)));
+    }
+    // gameGrid.printDebugGrid('numbers');
+    initStartMatchConfiguration();
+  }
+
+
   function restart(): void {
     countBombs.value = gameSettings[difficulty.value].numBombs;
+    initStartMatchConfiguration();
+  }
+
+  function initStartMatchConfiguration() {
     gameGrid.closeAllCells();
     restoreBombs();
     resetTime();
     gameResult.value = GameResult.NOT_END;
     firstClick.value = true;
+  }
+
+  /**
+   * Process the result, stops the timer and update the statistics.
+   * @param result 
+   * @returns true if there was a best time update.
+   */
+  function endGame(result: GameResult): boolean {
+    //console.log('End game with store!');
+    gameResult.value = result;
+    togglePauseTimer();
+    return statisticsStore.updateStatistics(difficulty.value, result, gameDuration.seconds);
   }
 
   // console.log('Game store init completed');

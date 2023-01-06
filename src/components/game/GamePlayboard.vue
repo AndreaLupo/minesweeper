@@ -41,6 +41,7 @@ import PlayboardCell from "./PlayboardCell.vue";
 
 import EndgameModalContent from "./EndgameModalContent.vue";
 
+console.log("Init game playboard");
 const gameStore = useGameStore();
 const difficulty: Difficulty = localStorage.getItem(
   "currentGameDifficulty"

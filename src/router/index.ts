@@ -15,7 +15,7 @@ const router = createRouter({
       component: () => import("../views/StatisticsView.vue"),
     },
     {
-      path: "/start",
+      path: "/start/:difficulty?",
       name: "Start",
       component: () => import("../views/StartGameView.vue"),
     },

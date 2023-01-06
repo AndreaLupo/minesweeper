@@ -3,7 +3,7 @@
     <font-awesome-icon
       icon="fa-solid fa-xmark"
       class="close-icon"
-      @click="closeModal"
+      @click="clickCloseIcon"
     ></font-awesome-icon>
 
     <font-awesome-icon
@@ -84,16 +84,28 @@ const isTutorial = computed(() => {
 });
 
 const newGame = () => {
-  location.reload();
+  // location.reload();
+  //gameStore.initGrid(difficulty.value);
+  //closeModal();
+  router.push(`/start/${difficulty.value}`);
+  closeModal();
 };
 
 const closeModal = () => {
   emit("closeModal");
-  emit("openCells");
 };
 const changeDifficulty = () => {
   router.push("/start");
   closeModal();
+};
+
+const openCells = () => {
+  emit("openCells");
+};
+
+const clickCloseIcon = () => {
+  closeModal();
+  openCells();
 };
 
 const restartGame = () => {

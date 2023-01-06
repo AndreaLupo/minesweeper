@@ -12,12 +12,20 @@
 import HomeLink from "@/components/ui/HomeLink.vue";
 import { Difficulty } from "@/model/grid/GameGrid";
 import router from "@/router";
+import { useRoute } from "vue-router";
 
 const start = (level: Difficulty) => {
   localStorage.setItem("tutorial", "false");
   localStorage.setItem("currentGameDifficulty", level);
   router.replace({ path: `/play` });
 };
+
+const route = useRoute();
+
+const difficulty = route.params.difficulty;
+if (difficulty) {
+  start(difficulty as Difficulty);
+}
 </script>
 
 <style lang="scss" scoped>
